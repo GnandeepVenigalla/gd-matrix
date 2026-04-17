@@ -1,13 +1,7 @@
 import type { NextConfig } from 'next';
 
-// Live URL after deploy: https://GnandeepVenigalla.github.io/gd-matrix/
-const nextConfig: NextConfig = {
-  output: 'export',
-  basePath: '/gd-matrix',
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
-};
+// GitHub Pages deployment is handled by .github/workflows/nextjs.yml
+// which auto-injects basePath and output settings via actions/configure-pages
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
