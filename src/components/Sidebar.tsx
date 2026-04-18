@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Send, DollarSign, Building2,
-  FileText, Settings, ShieldCheck, Bell, LogOut, Activity,
+  FileText, Settings, ShieldCheck, Bell, LogOut, Activity, TrendingUp,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -41,6 +41,7 @@ const nav: NavSection[] = [
   {
     section: 'Admin',
     items: [
+      { href: '/insights', label: 'Student Insights', icon: TrendingUp },
       { href: '/compliance', label: 'Visa & Compliance', icon: ShieldCheck, badge: '2', alert: true },
       { href: '/audit', label: 'Audit Logs', icon: Bell },
       { href: '/settings', label: 'Settings', icon: Settings },

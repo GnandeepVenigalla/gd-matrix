@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, FileText, ShieldCheck, BookOpen, LogOut, ArrowLeftRight
+  LayoutDashboard, FileText, ShieldCheck, BookOpen, LogOut, ArrowLeftRight,
+  MessageSquare, Mail, AlertTriangle, Lightbulb, MessageCircle
 } from 'lucide-react';
 
 const nav = [
@@ -13,6 +14,21 @@ const nav = [
       { href: '/portal/timesheets', label: 'Timesheets', icon: FileText },
       { href: '/portal/compliance', label: 'Compliance Vault', icon: ShieldCheck },
       { href: '/portal/prep', label: 'Interview Prep', icon: BookOpen },
+      { href: '/portal/feedback', label: 'My Feedback', icon: MessageSquare },
+    ],
+  },
+  {
+    section: 'Connect',
+    items: [
+      { href: '/portal/chat', label: 'Chat with Recruiter', icon: MessageCircle },
+      { href: '/portal/webmail', label: 'Webmail', icon: Mail },
+    ],
+  },
+  {
+    section: 'Support',
+    items: [
+      { href: '/portal/emergency', label: 'Emergency Support', icon: AlertTriangle },
+      { href: '/portal/ideas', label: 'Idea Protection', icon: Lightbulb },
     ],
   },
 ];
