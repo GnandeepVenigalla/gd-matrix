@@ -215,7 +215,7 @@ export default function BenchPage() {
     if (userStr) {
       try {
         const u = JSON.parse(userStr);
-        fetch(`\${getApiUrl()}/api/consultants?companyName=` + encodeURIComponent(u.companyName || 'GD Matrix'))
+        fetch(`${getApiUrl()}/api/consultants?companyName=` + encodeURIComponent(u.companyName || 'GD Matrix'))
           .then(r => r.json())
           .then(data => {
              setConsultants(Array.isArray(data) ? data : []);
@@ -227,7 +227,7 @@ export default function BenchPage() {
   const saveEdit = async () => {
     if (!editing) return;
     try {
-      const res = await fetch(`\${getApiUrl()}/api/consultants/` + editing._id, {
+      const res = await fetch(`${getApiUrl()}/api/consultants/` + editing._id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client: editClient, payRate: editRate })

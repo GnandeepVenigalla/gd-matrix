@@ -18,7 +18,7 @@ export default function ConsultantDashboard() {
         
         // Fetch live user status to get their assigned client
         const comp = encodeURIComponent(u.companyName || 'GD Matrix');
-        fetch(`\${getApiUrl()}/api/consultants?companyName=` + comp)
+        fetch(`${getApiUrl()}/api/consultants?companyName=` + comp)
           .then(r => r.json())
           .then(data => {
              if (Array.isArray(data)) {
@@ -46,7 +46,7 @@ export default function ConsultantDashboard() {
   const handleSave = async () => {
     if (!liveUser) return;
     try {
-      await fetch(`\${getApiUrl()}/api/consultants/` + liveUser._id, {
+      await fetch(`${getApiUrl()}/api/consultants/` + liveUser._id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm)

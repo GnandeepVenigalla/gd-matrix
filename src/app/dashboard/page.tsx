@@ -44,11 +44,11 @@ export default function DashboardPage() {
         setUser(u);
         const comp = encodeURIComponent(u.companyName || 'GD Matrix');
         
-        fetch(`\${getApiUrl()}/api/consultants?companyName=` + comp)
+        fetch(`${getApiUrl()}/api/consultants?companyName=` + comp)
           .then(r => r.json())
           .then(data => setConsultants(Array.isArray(data) ? data : []));
           
-        fetch(`\${getApiUrl()}/api/timesheets`)
+        fetch(`${getApiUrl()}/api/timesheets`)
           .then(r => r.json())
           .then(data => setTimesheets(Array.isArray(data) ? data : []));
           

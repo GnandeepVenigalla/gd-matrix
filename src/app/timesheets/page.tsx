@@ -31,7 +31,7 @@ export default function TimesheetsPage() {
     if (userStr) {
       try { comp = JSON.parse(userStr).companyName || comp; } catch(e){}
     }
-    fetch(`\${getApiUrl()}/api/consultants?companyName=` + encodeURIComponent(comp))
+    fetch(`${getApiUrl()}/api/consultants?companyName=` + encodeURIComponent(comp))
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setConsultants(data);
@@ -39,7 +39,7 @@ export default function TimesheetsPage() {
   };
 
   const fetchTimesheets = () => {
-    fetch(`\${getApiUrl()}/api/timesheets`)
+    fetch(`${getApiUrl()}/api/timesheets`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -95,7 +95,7 @@ export default function TimesheetsPage() {
     
     try {
       const timesheetIds = filteredTimesheets.map((t: any) => t.id);
-      const res = await fetch(`\${getApiUrl()}/api/invoices/generate`, {
+      const res = await fetch(`${getApiUrl()}/api/invoices/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ timesheetIds })

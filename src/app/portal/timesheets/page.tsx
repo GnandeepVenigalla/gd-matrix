@@ -61,7 +61,7 @@ export default function PortalTimesheets() {
       formData.append('clientProject', clientProject);
       formData.append('file', file);
 
-      const res = await fetch(`\${getApiUrl()}/api/timesheets`, {
+      const res = await fetch(`${getApiUrl()}/api/timesheets`, {
         method: 'POST',
         body: formData
       });
