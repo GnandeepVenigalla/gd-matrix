@@ -86,12 +86,25 @@ export default function SettingsPage() {
               <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
                 <input 
                   readOnly 
-                  value={typeof window !== 'undefined' ? `${window.location.origin}/auth/employee/signup?company=${user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal'}&code=${(user as any).inviteCode || ''}` : ''} 
+                  value={(() => {
+                    if (typeof window === 'undefined') return '';
+                    const companySlug = user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal';
+                    let host = window.location.hostname;
+                    if (host.startsWith('www.')) host = host.substring(4);
+                    const port = window.location.port ? `:${window.location.port}` : '';
+                    return `${window.location.protocol}//${companySlug}.${host}${port}/auth/employee/signup?code=${(user as any).inviteCode || ''}`;
+                  })()} 
                   style={{ flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontSize: 13 }} 
                 />
                 <button 
                   className="btn btn-secondary" 
-                  onClick={() => window.open(`/auth/employee/signup?company=${user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal'}&code=${(user as any).inviteCode || ''}`, '_blank')}
+                  onClick={() => {
+                    const companySlug = user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal';
+                    let host = window.location.hostname;
+                    if (host.startsWith('www.')) host = host.substring(4);
+                    const port = window.location.port ? `:${window.location.port}` : '';
+                    window.open(`${window.location.protocol}//${companySlug}.${host}${port}/auth/employee/signup?code=${(user as any).inviteCode || ''}`, '_blank');
+                  }}
                   title="Open Consultant Portal"
                 >
                   <ExternalLink size={14} /> Open
