@@ -41,8 +41,8 @@ export default function SettingsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="card">
               <div className="section-title" style={{ marginBottom: 16 }}>🏢 Organization</div>
-              <div className="form-group"><label>Company Name</label><input defaultValue={user.companyName} /></div>
-              <div className="form-group"><label>Admin Email</label><input defaultValue={user.email} /></div>
+              <div className="form-group"><label>Company Name</label><input key={`company-${user.companyName}`} defaultValue={user.companyName} /></div>
+              <div className="form-group"><label>Admin Email</label><input key={`email-${user.email}`} defaultValue={user.email} readOnly /></div>
               <div className="form-group">
                 <label>Company Logo</label>
                 <div style={{ border: '2px dashed var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '20px', textAlign: 'center', cursor: 'pointer' }}>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
               </div>
               <div className="form-group">
                 <label>Platform Name</label>
-                <input defaultValue={user.companyName} />
+                <input key={`platform-${user.companyName}`} defaultValue={user.companyName} />
               </div>
               <div className="form-group">
                 <label>Subscription Plan</label>
