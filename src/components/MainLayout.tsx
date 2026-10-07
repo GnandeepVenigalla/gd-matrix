@@ -1,5 +1,5 @@
 'use client';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import PortalSidebar from './PortalSidebar';
 import React, { useEffect, useState } from 'react';
@@ -9,11 +9,10 @@ const ROOT_SUBDOMAINS = new Set(['www', 'app', 'api', 'mail', 'localhost', '']);
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
 
-  // Detect if we're on a tenant subdomain (e.g. meta9.localhost:3001 or meta9.matrix.com).
-  // usePathname() returns the browser URL path which is '/' after a middleware rewrite,
-  // so we also check the hostname directly.
   const [isTenantDomain, setIsTenantDomain] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     const hostname = window.location.hostname;
@@ -24,7 +23,28 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   const isPortal = pathname?.startsWith('/portal');
-  const isAuthPath = pathname?.startsWith('/auth') || pathname?.startsWith('/tenant');
+  const isAuthPath = pathname?.startsWith('/auth') || pathname === '/';
+
+  useEffect(() => {
+    // Client-side authentication guard
+    if (!isAuthPath) {
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!token || !user) {
+        router.replace('/auth');
+      } else {
+        setAuthChecked(true);
+      }
+    } else {
+      setAuthChecked(true);
+    }
+  }, [pathname, isAuthPath, router]);
+
+  // Prevent flashing unprotected content before redirecting
+  if (!authChecked) {
+    return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
+  }
 
   // /portal/... pages always get the PortalSidebar — on any domain or subdomain
   if (isPortal) {
