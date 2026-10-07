@@ -1,4 +1,5 @@
 'use client';
+import { getTenantFromUrl } from '@/lib/tenantConfig';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import styles from './auth.module.css';

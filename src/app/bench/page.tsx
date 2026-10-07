@@ -102,7 +102,7 @@ function ConsultantDetailModal({ consultant, onClose }: { consultant: Consultant
       <div className="modal" style={{ maxWidth: 620 }} onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, var(--cyan), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--bg-primary)', fontSize: 16 }}>
-            {consultant.name.split(' ').map(n => n[0]).join('')}
+            {consultant.name.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
             <div className="modal-title">{consultant.name}</div>

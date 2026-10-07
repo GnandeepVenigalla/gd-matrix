@@ -72,7 +72,7 @@ export default function Sidebar() {
     }
   }, []);
 
-  const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const initials = user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
 
   return (
     <aside className="sidebar">

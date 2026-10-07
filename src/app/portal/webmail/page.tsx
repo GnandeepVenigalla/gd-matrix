@@ -62,7 +62,7 @@ export default function WebmailPage() {
                 style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', cursor: 'pointer', background: selected === e.id ? '#eff6ff' : !e.read ? '#fafbff' : 'var(--white)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 11, flexShrink: 0 }}>
-                    {e.from.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                    {e.from.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                   </div>
                   <span style={{ fontWeight: e.read ? 400 : 700, fontSize: '0.85rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.from}</span>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', flexShrink: 0 }}>{e.date}</span>
@@ -92,7 +92,7 @@ export default function WebmailPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12 }}>
-                  {detail.from.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  {detail.from.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

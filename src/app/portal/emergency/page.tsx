@@ -103,7 +103,7 @@ export default function EmergencyPage() {
                 {contacts.map((c, i) => (
                   <div key={c.name} style={{ padding: '14px 20px', borderBottom: i < contacts.length - 1 ? '1px solid var(--border)' : 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: c.available ? '#eff6ff' : '#f1f5f9', color: c.available ? '#2563eb' : '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
-                      {c.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>

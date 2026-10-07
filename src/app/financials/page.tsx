@@ -176,7 +176,7 @@ export default function FinancialsPage() {
               return (
                 <div key={c.id} className="ledger-row">
                   <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, var(--cyan), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
-                    {c.name.split(' ').map(n => n[0]).join('')}
+                    {c.name.split(' ').map((n: string) => n[0]).join('')}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 600 }}>{c.name}</div>

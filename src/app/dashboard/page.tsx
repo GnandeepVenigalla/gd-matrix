@@ -181,7 +181,7 @@ return (
               {openInterviews.slice(0, 4).map(sub => (
                 <div key={sub.id} className="ledger-row">
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--purple-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--purple)', flexShrink: 0 }}>
-                    {sub.consultantName.split(' ').map(n => n[0]).join('')}
+                    {sub.consultantName.split(' ').map((n: string) => n[0]).join('')}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{sub.consultantName}</div>

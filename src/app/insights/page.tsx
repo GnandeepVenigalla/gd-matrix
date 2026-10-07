@@ -27,7 +27,7 @@ const insights = consultants.map((c) => {
   if (subj < 65) recs.push(`Assign a ${c.techStack[0]} deep-dive module and certification path.`);
   if (myS.filter(s => s.status === 'Rejected').length > 1) recs.push('Analyse rejections and reposition resume for niche roles.');
   if (!recs.length) recs.push('Performing well — maintain check-ins and target senior roles.');
-  return { ...c, initials: c.name.split(' ').map(n => n[0]).join(''), weak, scores: { communication: comm, interview: intv, subject: subj }, recs, placementRate: myS.length ? Math.round(myS.filter(s => s.status === 'Placed').length / myS.length * 100) : 0 };
+  return { ...c, initials: c.name.split(' ').map((n: string) => n[0]).join(''), weak, scores: { communication: comm, interview: intv, subject: subj }, recs, placementRate: myS.length ? Math.round(myS.filter(s => s.status === 'Placed').length / myS.length * 100) : 0 };
 });
 
 function Bar({ v, color }: { v: number; color: string }) {

@@ -1,6 +1,7 @@
 'use client';
 import { getApiUrl } from '@/lib/apiConfig';
-import React, { useState } from 'react';
+import { getTenantFromUrl } from '@/lib/tenantConfig';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../../auth.module.css';
 import Logo from '../../../../components/Logo';
@@ -13,6 +14,11 @@ export default function EmployeeLoginPage() {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tenant, setTenant] = useState('');
+  useEffect(() => {
+    const t = getTenantFromUrl();
+    if (t) setTenant(t);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

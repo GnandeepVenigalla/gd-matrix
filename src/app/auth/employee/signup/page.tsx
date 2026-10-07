@@ -1,6 +1,7 @@
 'use client';
 import { getApiUrl } from '@/lib/apiConfig';
-import React, { useState } from 'react';
+import { getTenantFromUrl } from '@/lib/tenantConfig';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../../auth.module.css';
 
@@ -24,6 +25,14 @@ export default function EmployeeSignupPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tenant, setTenant] = useState('');
+  useEffect(() => {
+    const t = getTenantFromUrl();
+    if (t) {
+      setTenant(t);
+      setInvitedCompany(t);
+    }
+  }, []);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
