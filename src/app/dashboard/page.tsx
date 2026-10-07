@@ -57,13 +57,13 @@ export default function DashboardPage() {
   }, []);
 
   // Compute metrics from real DB data
-  const onBench = consultants.filter(c => !c.client || c.client === 'Bench');
-  const onProject = consultants.filter(c => c.client && c.client !== 'Bench');
+  const onBench = consultants.filter((c: any) => !c.client || c.client === 'Bench');
+  const onProject = consultants.filter((c: any) => c.client && c.client !== 'Bench');
   
   // Calculate revenue from approved timesheets
   const monthlyRevenue = timesheets
-    .filter(t => t.status === 'Approved')
-    .reduce((sum, t) => sum + ((t.hours || 0) * (t.payRate || 0)), 0);
+    .filter((t: any) => t.status === 'Approved')
+    .reduce((sum: any, t: any) => sum + ((t.hours || 0) * (t.payRate || 0)), 0);
 
   // We don't have Visa Expiry in DB yet, so default to empty
   const expiringVisas: any[] = []; 
@@ -81,11 +81,11 @@ return (
       <div className="page-content">
 
         {/* Alerts */}
-        {expiringVisas.filter(c => getVisaUrgency(c.visaExpiry) === 'critical').length > 0 && (
+        {expiringVisas.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'critical').length > 0 && (
           <div className="alert alert-red">
             <AlertTriangle size={16} />
             <span>
-              <strong>{expiringVisas.filter(c => getVisaUrgency(c.visaExpiry) === 'critical').length} consultants</strong> have visas expiring in &lt;30 days. Immediate action required.
+              <strong>{expiringVisas.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'critical').length} consultants</strong> have visas expiring in &lt;30 days. Immediate action required.
             </span>
           </div>
         )}
@@ -110,14 +110,14 @@ return (
             <div className="metric-icon red"><AlertTriangle size={20} /></div>
             <div className="metric-label">Expiring Visas (60d)</div>
             <div className="metric-value">{expiringVisas.length}</div>
-            <div className="metric-change down"><TrendingDown size={12} /> {expiringVisas.filter(c => getVisaUrgency(c.visaExpiry) === 'critical').length} critical</div>
+            <div className="metric-change down"><TrendingDown size={12} /> {expiringVisas.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'critical').length} critical</div>
           </div>
 
           <div className="metric-card purple">
             <div className="metric-icon purple"><Clock size={20} /></div>
             <div className="metric-label">Interviews Active</div>
             <div className="metric-value">{openInterviews.length}</div>
-            <div className="metric-change up"><TrendingUp size={12} /> {submissions.filter(s => s.status === 'Offer').length} at Offer stage</div>
+            <div className="metric-change up"><TrendingUp size={12} /> {submissions.filter((s: any) => s.status === 'Offer').length} at Offer stage</div>
           </div>
         </div>
 
@@ -140,13 +140,13 @@ return (
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
-                    ${invoices.filter(i => i.status === 'Overdue').reduce((s, i) => s + i.amount, 0).toLocaleString()}
+                    ${invoices.filter((i: any) => i.status === 'Overdue').reduce((s: any, i: any) => s + i.amount, 0).toLocaleString()}
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>OVERDUE</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--purple)', fontFamily: 'JetBrains Mono, monospace' }}>
-                    ${invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amount, 0).toLocaleString()}
+                    ${invoices.filter((i: any) => i.status === 'Paid').reduce((s: any, i: any) => s + i.amount, 0).toLocaleString()}
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>COLLECTED (MTD)</div>
                 </div>
@@ -164,13 +164,13 @@ return (
 
               <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
                 {[
-                  { label: 'Submitted', count: submissions.filter(s => s.status === 'Submitted').length, color: 'var(--blue)' },
-                  { label: 'Screening', count: submissions.filter(s => s.status === 'Client Screening').length, color: 'var(--yellow)' },
-                  { label: 'Round 1', count: submissions.filter(s => s.status === 'Round 1').length, color: 'var(--purple)' },
-                  { label: 'Round 2', count: submissions.filter(s => s.status === 'Round 2').length, color: 'var(--cyan)' },
-                  { label: 'Offer', count: submissions.filter(s => s.status === 'Offer').length, color: 'var(--green)' },
-                  { label: 'Placed', count: submissions.filter(s => s.status === 'Placed').length, color: 'var(--green)' },
-                ].map(col => (
+                  { label: 'Submitted', count: submissions.filter((s: any) => s.status === 'Submitted').length, color: 'var(--blue)' },
+                  { label: 'Screening', count: submissions.filter((s: any) => s.status === 'Client Screening').length, color: 'var(--yellow)' },
+                  { label: 'Round 1', count: submissions.filter((s: any) => s.status === 'Round 1').length, color: 'var(--purple)' },
+                  { label: 'Round 2', count: submissions.filter((s: any) => s.status === 'Round 2').length, color: 'var(--cyan)' },
+                  { label: 'Offer', count: submissions.filter((s: any) => s.status === 'Offer').length, color: 'var(--green)' },
+                  { label: 'Placed', count: submissions.filter((s: any) => s.status === 'Placed').length, color: 'var(--green)' },
+                ].map((col: any) => (
                   <div key={col.label} style={{ flex: 1, background: 'var(--bg-secondary)', borderRadius: 8, padding: '10px 8px', textAlign: 'center', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ fontSize: 20, fontWeight: 800, color: col.color }}>{col.count}</div>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>{col.label}</div>
@@ -178,7 +178,7 @@ return (
                 ))}
               </div>
 
-              {openInterviews.slice(0, 4).map(sub => (
+              {openInterviews.slice(0, 4).map((sub: any) => (
                 <div key={sub.id} className="ledger-row">
                   <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--purple-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--purple)', flexShrink: 0 }}>
                     {sub.consultantName.split(' ').map((n: string) => n[0]).join('')}
@@ -216,7 +216,7 @@ return (
                     </tr>
                   </thead>
                   <tbody>
-                    {expiringVisas.map(c => {
+                    {expiringVisas.map((c: any) => {
                       const days = getDaysUntil(c.visaExpiry);
                       const risk = getVisaUrgency(c.visaExpiry);
                       return (
@@ -247,7 +247,7 @@ return (
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Live</span>
               </div>
               <div className="activity-feed">
-                {auditLogs.map((log, i) => (
+                {auditLogs.map((log: any, i: number) => (
                   <div key={log.id} className="activity-item">
                     <div className="activity-dot" style={{
                       background: i === 0 ? 'var(--cyan)' : i === 1 ? 'var(--green)' : i === 2 ? 'var(--purple)' : 'var(--yellow)'
@@ -270,9 +270,9 @@ return (
               {[
                 { label: 'Resumes Sent', value: submissions.length, color: 'var(--cyan)' },
                 { label: 'Interviews Scheduled', value: openInterviews.length, color: 'var(--purple)' },
-                { label: 'Timesheets Received', value: timesheets.filter(t => t.status === 'Submitted' || t.status === 'Pending').length, color: 'var(--green)' },
+                { label: 'Timesheets Received', value: timesheets.filter((t: any) => t.status === 'Submitted' || t.status === 'Pending').length, color: 'var(--green)' },
                 { label: 'Invoices Generated', value: invoices.length, color: 'var(--yellow)' },
-              ].map(s => (
+              ].map((s: any) => (
                 <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-subtle)' }}>
                   <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{s.label}</span>
                   <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: s.color, fontSize: 15 }}>{s.value}</span>

@@ -46,17 +46,17 @@ export default function VendorsPage() {
           <div className="metric-card green">
             <div className="metric-icon green"><TrendingUp size={20} /></div>
             <div className="metric-label">Total Placements</div>
-            <div className="metric-value">{allVendors.reduce((s, v) => s + v.placements, 0)}</div>
+            <div className="metric-value">{allVendors.reduce((s: any, v: any) => s + v.placements, 0)}</div>
           </div>
           <div className="metric-card purple">
             <div className="metric-icon purple"><Users size={20} /></div>
             <div className="metric-label">Active Submissions</div>
-            <div className="metric-value">{allVendors.reduce((s, v) => s + v.activeSubmissions, 0)}</div>
+            <div className="metric-value">{allVendors.reduce((s: any, v: any) => s + v.activeSubmissions, 0)}</div>
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
-          {allVendors.map(vendor => (
+          {allVendors.map((vendor: any) => (
             <div key={vendor.id} className="card" style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
                 <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, var(--blue), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: 'white', flexShrink: 0 }}>
@@ -67,7 +67,7 @@ export default function VendorsPage() {
                   <span className={`badge ${TYPE_COLOR[vendor.type] || 'badge-gray'}`}>{vendor.type}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 3 }}>
-                  {[1,2,3].map(i => (
+                  {[1,2,3].map((i: any) => (
                     <Star key={i} size={12} style={{ color: i <= Math.round(vendor.relationshipStrength / 33) ? 'var(--yellow)' : 'var(--border-subtle)' }} fill={i <= Math.round(vendor.relationshipStrength / 33) ? 'var(--yellow)' : 'none'} />
                   ))}
                 </div>
@@ -81,7 +81,7 @@ export default function VendorsPage() {
                   { label: 'Interviews', value: vendor.interviewsGiven, color: 'var(--purple)' },
                   { label: 'Placements', value: vendor.placements, color: 'var(--green)' },
                   { label: 'Active Subs', value: vendor.activeSubmissions, color: 'var(--cyan)' },
-                ].map(s => (
+                ].map((s: any) => (
                   <div key={s.label} style={{ textAlign: 'center', background: 'var(--bg-secondary)', borderRadius: 8, padding: '8px 4px' }}>
                     <div style={{ fontSize: 18, fontWeight: 800, color: s.color, fontFamily: 'JetBrains Mono, monospace' }}>{s.value}</div>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{s.label}</div>

@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Clock, CheckCircle, AlertTriangle, FileText, Plus, Download, X } from 'lucide-react';
 import { invoices as allInvoices, submissions, consultants, getMargin } from '@/lib/mockData';
 
-const ar = allInvoices.filter(i => i.status !== 'Paid');
-const paid = allInvoices.filter(i => i.status === 'Paid');
+const ar = allInvoices.filter((i: any) => i.status !== 'Paid');
+const paid = allInvoices.filter((i: any) => i.status === 'Paid');
 
-const totalAR = ar.reduce((s, i) => s + i.amount, 0);
-const totalOverdue = allInvoices.filter(i => i.status === 'Overdue').reduce((s, i) => s + i.amount, 0);
-const totalPaid = paid.reduce((s, i) => s + i.amount, 0);
+const totalAR = ar.reduce((s: any, i: any) => s + i.amount, 0);
+const totalOverdue = allInvoices.filter((i: any) => i.status === 'Overdue').reduce((s: any, i: any) => s + i.amount, 0);
+const totalPaid = paid.reduce((s: any, i: any) => s + i.amount, 0);
 
 // AP = what we owe consultants (70% of AR roughly)
-const totalAP = allInvoices.reduce((s, i) => s + i.hours * (i.rate * 0.73), 0);
+const totalAP = allInvoices.reduce((s: any, i: any) => s + i.hours * (i.rate * 0.73), 0);
 
 function InvoiceModal({ onClose }: { onClose: () => void }) {
   const [selectedSub, setSelectedSub] = useState(submissions[0]?.id || '');
@@ -34,7 +34,7 @@ function InvoiceModal({ onClose }: { onClose: () => void }) {
           <div className="form-group">
             <label>Placement / Consultant</label>
             <select value={selectedSub} onChange={e => setSelectedSub(e.target.value)}>
-              {submissions.filter(s => ['Placed', 'Offer', 'Round 2'].includes(s.status)).map(s => (
+              {submissions.filter((s: any) => ['Placed', 'Offer', 'Round 2'].includes(s.status)).map((s: any) => (
                 <option key={s.id} value={s.id}>{s.consultantName} → {s.vendorName}</option>
               ))}
             </select>
@@ -169,7 +169,7 @@ export default function FinancialsPage() {
             <div className="section-header">
               <div className="section-title">Accounts Payable — Consultant Payouts</div>
             </div>
-            {consultants.filter(c => c.status === 'On Project').map(c => {
+            {consultants.filter((c: any) => c.status === 'On Project').map((c: any) => {
               const sub = submissions.find(s => s.consultantId === c.id && ['Placed'].includes(s.status));
               if (!sub) return null;
               const ap = sub.buyRate * 160;
@@ -208,7 +208,7 @@ export default function FinancialsPage() {
                 </tr>
               </thead>
               <tbody>
-                {displayed.map(inv => (
+                {displayed.map((inv: any) => (
                   <tr key={inv.id}>
                     <td style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'var(--cyan)' }}>{inv.id}</td>
                     <td style={{ fontWeight: 600 }}>{inv.consultantName}</td>
@@ -218,7 +218,7 @@ export default function FinancialsPage() {
                     <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: 'var(--green)', fontSize: 14 }}>
                       ${inv.amount.toLocaleString()}
                     </td>
-                    <td><span className={`badge ${STATUS_MAP[inv.status]}`}>{inv.status}</span></td>
+                    <td><span className={`badge ${STATUS_MAP[inv.status as keyof typeof STATUS_MAP]}`}>{inv.status}</span></td>
                     <td style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: inv.status === 'Overdue' ? 'var(--red)' : 'var(--text-secondary)' }}>
                       {inv.dueDate}
                     </td>

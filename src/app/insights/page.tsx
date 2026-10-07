@@ -12,7 +12,7 @@ const areaConfig = {
 };
 
 const insights = consultants.map((c) => {
-  const myS = submissions.filter(s => s.consultantId === c.id);
+  const myS = submissions.filter((s: any) => s.consultantId === c.id);
   const seed = c.id.charCodeAt(3);
   const comm = 40 + (seed * 17) % 55;
   const intv = 35 + (seed * 23) % 60;
@@ -25,9 +25,9 @@ const insights = consultants.map((c) => {
   if (comm < 65) recs.push('Schedule bi-weekly mock calls to improve verbal clarity.');
   if (intv < 65) recs.push('Run 2 mock technical rounds using the client-prep deck.');
   if (subj < 65) recs.push(`Assign a ${c.techStack[0]} deep-dive module and certification path.`);
-  if (myS.filter(s => s.status === 'Rejected').length > 1) recs.push('Analyse rejections and reposition resume for niche roles.');
+  if (myS.filter((s: any) => s.status === 'Rejected').length > 1) recs.push('Analyse rejections and reposition resume for niche roles.');
   if (!recs.length) recs.push('Performing well — maintain check-ins and target senior roles.');
-  return { ...c, initials: c.name.split(' ').map((n: string) => n[0]).join(''), weak, scores: { communication: comm, interview: intv, subject: subj }, recs, placementRate: myS.length ? Math.round(myS.filter(s => s.status === 'Placed').length / myS.length * 100) : 0 };
+  return { ...c, initials: c.name.split(' ').map((n: string) => n[0]).join(''), weak, scores: { communication: comm, interview: intv, subject: subj }, recs, placementRate: myS.length ? Math.round(myS.filter((s: any) => s.status === 'Placed').length / myS.length * 100) : 0 };
 });
 
 function Bar({ v, color }: { v: number; color: string }) {
@@ -51,7 +51,7 @@ function Card({ d }: { d: typeof insights[0] }) {
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
           {d.weak.length === 0
             ? <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}><CheckCircle size={13} /> On Track</span>
-            : d.weak.map(a => { const cfg = areaConfig[a]; const I = cfg.icon; return <span key={a} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.73rem', fontWeight: 600, padding: '3px 7px', borderRadius: 4, background: cfg.bg, color: cfg.text }}><I size={11} />{cfg.label}</span>; })
+            : d.weak.map((a: any) => { const cfg = areaConfig[a as keyof typeof areaConfig]; const I = cfg.icon; return <span key={a} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.73rem', fontWeight: 600, padding: '3px 7px', borderRadius: 4, background: cfg.bg, color: cfg.text }}><I size={11} />{cfg.label}</span>; })
           }
           {open ? <ChevronUp size={15} style={{ color: 'var(--text-muted)' }} /> : <ChevronDown size={15} style={{ color: 'var(--text-muted)' }} />}
         </div>
@@ -60,8 +60,8 @@ function Card({ d }: { d: typeof insights[0] }) {
         <div style={{ borderTop: '1px solid var(--border)', padding: 20, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
           <div>
             <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>Skill Scores</div>
-            {(Object.keys(areaConfig) as Area[]).map(a => {
-              const v = d.scores[a]; const cfg = areaConfig[a];
+            {(Object.keys(areaConfig) as Area[]).map((a: any) => {
+              const v = d.scores[a as keyof typeof d.scores]; const cfg = areaConfig[a as keyof typeof areaConfig];
               return <div key={a} style={{ marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{cfg.label}</span>
@@ -84,7 +84,7 @@ function Card({ d }: { d: typeof insights[0] }) {
           <div>
             <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 5 }}><Lightbulb size={12} />Recommended Actions</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {d.recs.map((r, i) => (
+              {d.recs.map((r: any, i: number) => (
                 <div key={i} style={{ display: 'flex', gap: 8, padding: '10px 12px', background: '#eff6ff', borderRadius: 8, borderLeft: '3px solid var(--accent)' }}>
                   <Star size={12} style={{ color: 'var(--accent)', marginTop: 2, flexShrink: 0 }} />
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{r}</span>
@@ -104,7 +104,7 @@ function Card({ d }: { d: typeof insights[0] }) {
 
 export default function InsightsPage() {
   const [filter, setFilter] = useState<'all' | Area>('all');
-  const filtered = filter === 'all' ? insights : insights.filter(i => i.weak.includes(filter));
+  const filtered = filter === 'all' ? insights : insights.filter((i: any) => i.weak.includes(filter));
   return (
     <>
       <div className="top-bar">
@@ -116,11 +116,11 @@ export default function InsightsPage() {
           <div className="card" style={{ padding: '14px 18px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><AlertCircle size={18} style={{ color: '#dc2626' }} /></div>
-              <div><div style={{ fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>{insights.filter(i => i.weak.length > 0).length}</div><div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 3 }}>Needs Attention</div></div>
+              <div><div style={{ fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>{insights.filter((i: any) => i.weak.length > 0).length}</div><div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 3 }}>Needs Attention</div></div>
             </div>
           </div>
-          {(Object.keys(areaConfig) as Area[]).map(a => {
-            const cfg = areaConfig[a]; const I = cfg.icon; const count = insights.filter(i => i.weak.includes(a)).length;
+          {(Object.keys(areaConfig) as Area[]).map((a: any) => {
+            const cfg = areaConfig[a as keyof typeof areaConfig]; const I = cfg.icon; const count = insights.filter((i: any) => i.weak.includes(a)).length;
             return <div key={a} className="card" style={{ padding: '14px 18px', cursor: 'pointer', border: filter === a ? `1.5px solid ${cfg.color}` : '1px solid var(--border)' }} onClick={() => setFilter(filter === a ? 'all' : a)}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: cfg.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><I size={18} style={{ color: cfg.text }} /></div>
@@ -130,14 +130,14 @@ export default function InsightsPage() {
           })}
         </div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-          {(['all', 'communication', 'interview', 'subject'] as const).map(f => (
+          {(['all', 'communication', 'interview', 'subject'] as const).map((f: any) => (
             <button key={f} onClick={() => setFilter(f)} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`}>
-              {f === 'all' ? 'All Consultants' : areaConfig[f].label}
+              {f === 'all' ? 'All Consultants' : areaConfig[f as keyof typeof areaConfig].label}
             </button>
           ))}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {filtered.map(d => <Card key={d.id} d={d} />)}
+          {filtered.map((d: any) => <Card key={d.id} d={d} />)}
         </div>
       </div>
     </>

@@ -75,7 +75,7 @@ export default function IdeasPage() {
                   <label>Category *</label>
                   <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
                     <option value="">Select a category...</option>
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    {categories.map((c: any) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -93,7 +93,7 @@ export default function IdeasPage() {
 
         {/* Ideas List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {list.map(idea => {
+          {list.map((idea: any) => {
             const cfg = statusConfig[idea.status as keyof typeof statusConfig];
             const I = cfg.icon;
             return (

@@ -46,7 +46,7 @@ function HotlistModal({ selected, onClose }: { selected: Consultant[]; onClose: 
     <th style="padding:10px;border:1px solid #30363d;">Available</th>
   </tr></thead>
   <tbody>
-    ${selected.map((c, i) => `<tr style="background:${i % 2 ? '#1A2233' : '#161B22'}">
+    ${selected.map((c: any, i: number) => `<tr style="background:${i % 2 ? '#1A2233' : '#161B22'}">
       <td style="padding:8px 10px;border:1px solid #30363d;font-weight:600;color:#E6EDF3;">${c.name.split(' ')[0]} ****</td>
       <td style="padding:8px 10px;border:1px solid #30363d;color:#8B949E;">${c.techStack.slice(0,3).join(', ')}</td>
       <td style="padding:8px 10px;border:1px solid #30363d;color:#00F5FF;">${c.visaType}</td>
@@ -132,7 +132,7 @@ function ConsultantDetailModal({ consultant, onClose }: { consultant: Consultant
           <div style={{ marginBottom: 20 }}>
             <label style={{ marginBottom: 8, display: 'block' }}>Tech Stack</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {consultant.techStack.map(s => <span key={s} className="chip">{s}</span>)}
+              {consultant.techStack.map((s: any) => <span key={s} className="chip">{s}</span>)}
             </div>
           </div>
 
@@ -241,7 +241,7 @@ export default function BenchPage() {
     }
   };
 
-  const filtered = useMemo(() => consultants.filter(c => {
+  const filtered = useMemo(() => consultants.filter((c: any) => {
     const q = search.toLowerCase();
     return !q || c.name.toLowerCase().includes(q) || (c.client || 'Bench').toLowerCase().includes(q);
   }), [search, consultants]);
@@ -284,7 +284,7 @@ export default function BenchPage() {
               {filtered.length === 0 && (
                 <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>No consultants found. Give them your invite code to sign up!</td></tr>
               )}
-              {filtered.map(c => (
+              {filtered.map((c: any) => (
                 <tr key={c._id}>
                   <td style={{ fontWeight: 600 }}>{c.name}</td>
                   <td>{c.title || 'Consultant'}</td>

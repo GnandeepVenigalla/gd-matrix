@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { getApiUrl } from '@/lib/apiConfig';
 import { FileText, Download, CheckCircle, AlertTriangle, Clock, TrendingUp } from 'lucide-react';
 
 const STATUS_MAP = { Paid: 'badge-green', Pending: 'badge-yellow', Overdue: 'badge-red' };
@@ -21,9 +22,9 @@ export default function InvoicesPage() {
       });
   }, []);
 
-  const totalPaid = allInvoices.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amount, 0);
-  const totalPending = allInvoices.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
-  const totalOverdue = allInvoices.filter(i => i.status === 'Overdue').reduce((s, i) => s + i.amount, 0);
+  const totalPaid = allInvoices.filter((i: any) => i.status === 'Paid').reduce((s: any, i: any) => s + i.amount, 0);
+  const totalPending = allInvoices.filter((i: any) => i.status === 'Pending').reduce((s: any, i: any) => s + i.amount, 0);
+  const totalOverdue = allInvoices.filter((i: any) => i.status === 'Overdue').reduce((s: any, i: any) => s + i.amount, 0);
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading invoices...</div>;
 
@@ -65,7 +66,7 @@ export default function InvoicesPage() {
             <tbody>
                 {allInvoices.length === 0 ? (
                   <tr><td colSpan={7} style={{textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)'}}>No invoices generated yet.</td></tr>
-                ) : allInvoices.map(inv => (
+                ) : allInvoices.map((inv: any) => (
                   <tr key={inv.id}>
                     <td>
                       <div style={{ fontWeight: 500 }}>{inv.consultantName || 'Unknown'}</div>

@@ -38,7 +38,7 @@ export default function PortalTimesheets() {
     try {
       const res = await fetch(`${getApiUrl()}/api/timesheets/${id}`, { method: 'DELETE' });
       if (res.ok) {
-        setTimesheets(prev => prev.filter(ts => ts.id !== id));
+        setTimesheets(prev => prev.filter((ts: any) => ts.id !== id));
       } else {
         alert('Failed to delete timesheet');
       }
@@ -115,7 +115,7 @@ export default function PortalTimesheets() {
                    </tr>
                  </thead>
                  <tbody>
-                   {timesheets.map((ts, i) => (
+                   {timesheets.map((ts: any, i: number) => (
                      <tr key={i}>
                        <td style={{ fontWeight: 500 }}>{ts.week}</td>
                        <td>{ts.hours}h</td>

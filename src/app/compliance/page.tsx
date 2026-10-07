@@ -12,9 +12,9 @@ const VISA_EXPIRY_RULES = [
 export default function CompliancePage() {
   const [selectedConsultant, setSelectedConsultant] = useState(consultants[0]);
 
-  const critical = consultants.filter(c => getVisaUrgency(c.visaExpiry) === 'critical');
-  const warning = consultants.filter(c => getVisaUrgency(c.visaExpiry) === 'warning');
-  const ok = consultants.filter(c => getVisaUrgency(c.visaExpiry) === 'ok');
+  const critical = consultants.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'critical');
+  const warning = consultants.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'warning');
+  const ok = consultants.filter((c: any) => getVisaUrgency(c.visaExpiry) === 'ok');
 
   return (
     <>
@@ -57,7 +57,7 @@ export default function CompliancePage() {
           <div className="metric-card cyan">
             <div className="metric-icon cyan"><FileLock size={20} /></div>
             <div className="metric-label">Docs 100% Complete</div>
-            <div className="metric-value">{consultants.filter(c => Object.values(c.compliance).every(Boolean)).length}</div>
+            <div className="metric-value">{consultants.filter((c: any) => Object.values(c.compliance).every(Boolean)).length}</div>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default function CompliancePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {consultants.map(c => {
+                  {consultants.map((c: any) => {
                     const days = getDaysUntil(c.visaExpiry);
                     const urgency = getVisaUrgency(c.visaExpiry);
                     return (
@@ -120,7 +120,7 @@ export default function CompliancePage() {
             {/* Automation Rules */}
             <div className="card">
               <div className="section-title" style={{ marginBottom: 14 }}>🤖 Automation Rules</div>
-              {VISA_EXPIRY_RULES.map(rule => (
+              {VISA_EXPIRY_RULES.map((rule: any) => (
                 <div key={rule.days} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>
                   <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: rule.color === 'var(--red)' ? 'var(--red-dim)' : 'var(--yellow-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Clock size={16} style={{ color: rule.color }} />
@@ -149,7 +149,7 @@ export default function CompliancePage() {
                   { key: 'i94', label: 'I-94 Record', desc: 'Arrival/departure record' },
                   { key: 'lca', label: 'LCA / H1B Notice', desc: 'Labor Condition Application' },
                   { key: 'i797', label: 'I-797 Approval', desc: 'USCIS approval notice' },
-                ].map(doc => {
+                ].map((doc: any) => {
                   const uploaded = selectedConsultant.compliance[doc.key as keyof typeof selectedConsultant.compliance];
                   return (
                     <div key={doc.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>

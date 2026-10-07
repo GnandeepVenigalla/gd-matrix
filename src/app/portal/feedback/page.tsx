@@ -19,8 +19,8 @@ function ScoreDial({ score }: { score: number }) {
 export default function FeedbackPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const detail = feedbackData.find(f => f.id === selected);
-  const avg = feedbackData.length ? Math.round(feedbackData.reduce((s, f) => s + f.score, 0) / feedbackData.length) : 0;
-  const passed = feedbackData.filter(f => f.result === 'Passed').length;
+  const avg = feedbackData.length ? Math.round(feedbackData.reduce((s: any, f: any) => s + f.score, 0) / feedbackData.length) : 0;
+  const passed = feedbackData.filter((f: any) => f.result === 'Passed').length;
 
   return (
     <>
@@ -32,8 +32,8 @@ export default function FeedbackPage() {
           {[
             { label: 'Avg Score', value: `${avg}%`, icon: Star, color: '#f59e0b', bg: '#fffbeb' },
             { label: 'Passed', value: `${passed}/${feedbackData.length}`, icon: CheckCircle, color: '#16a34a', bg: '#f0fdf4' },
-            { label: 'In Review', value: `${feedbackData.filter(f => f.result === 'Passed').length}`, icon: TrendingUp, color: '#2563eb', bg: '#eff6ff' },
-          ].map(s => {
+            { label: 'In Review', value: `${feedbackData.filter((f: any) => f.result === 'Passed').length}`, icon: TrendingUp, color: '#2563eb', bg: '#eff6ff' },
+          ].map((s: any) => {
             const I = s.icon;
             return (
               <div key={s.label} className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -52,7 +52,7 @@ export default function FeedbackPage() {
                 No feedback data available. Complete an interview to see your scores.
               </div>
             )}
-            {feedbackData.map(f => (
+            {feedbackData.map((f: any) => (
               <div key={f.id} className="card" onClick={() => setSelected(selected === f.id ? null : f.id)}
                 style={{ cursor: 'pointer', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, border: selected === f.id ? '1.5px solid var(--accent)' : '1px solid var(--border)' }}>
                 <ScoreDial score={f.score} />
@@ -87,9 +87,9 @@ export default function FeedbackPage() {
                   <div key={k} style={{ marginBottom: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                       <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>{k.replace(/([A-Z])/g, ' $1')}</span>
-                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: v >= 80 ? '#16a34a' : v >= 65 ? '#d97706' : '#dc2626' }}>{v}%</span>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: Number(v) >= 80 ? '#16a34a' : Number(v) >= 65 ? '#d97706' : '#dc2626' }}>{Number(v)}%</span>
                     </div>
-                    <div style={{ height: 6, background: '#f1f5f9', borderRadius: 99 }}><div style={{ width: `${v}%`, height: '100%', background: v >= 80 ? '#22c55e' : v >= 65 ? '#f59e0b' : '#ef4444', borderRadius: 99 }} /></div>
+                    <div style={{ height: 6, background: '#f1f5f9', borderRadius: 99 }}><div style={{ width: `${Number(v)}%`, height: '100%', background: Number(v) >= 80 ? '#22c55e' : Number(v) >= 65 ? '#f59e0b' : '#ef4444', borderRadius: 99 }} /></div>
                   </div>
                 ))}
 
@@ -104,7 +104,7 @@ export default function FeedbackPage() {
                 {/* Focus Areas */}
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 5 }}><BookOpen size={12} />Focus Areas</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {detail.focusAreas.map((a, i) => (
+                  {detail.focusAreas.map((a: any, i: number) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', padding: '8px 12px', background: '#faf5ff', borderRadius: 6 }}>
                       <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#a855f7', flexShrink: 0 }} />{a}
                     </div>

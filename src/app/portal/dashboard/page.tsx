@@ -62,9 +62,9 @@ export default function ConsultantDashboard() {
   const clientName = isOnProject ? liveUser.client : 'None';
   const recruiterName = user.companyName ? user.companyName + ' Admin' : 'Admin';
 
-  const mySubmissions = submissions.filter(s => s.consultantId === 'c001');
+  const mySubmissions = submissions.filter((s: any) => s.consultantId === 'c001');
 
-  const activeSubmissions = mySubmissions.filter(s => ['Submitted', 'Client Screening', 'Round 1', 'Round 2', 'Offer'].includes(s.status));
+  const activeSubmissions = mySubmissions.filter((s: any) => ['Submitted', 'Client Screening', 'Round 1', 'Round 2', 'Offer'].includes(s.status));
 
   return (
     <>
@@ -87,7 +87,7 @@ export default function ConsultantDashboard() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {activeSubmissions.map(sub => (
+                {activeSubmissions.map((sub: any) => (
                   <div key={sub.id} style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ fontWeight: 500, fontSize: '1.1rem', marginBottom: '0.25rem' }}>{sub.position}</div>
@@ -121,7 +121,7 @@ export default function ConsultantDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mySubmissions.filter(s => ['Placed', 'Rejected'].includes(s.status)).map(sub => (
+                  {mySubmissions.filter((s: any) => ['Placed', 'Rejected'].includes(s.status)).map((sub: any) => (
                     <tr key={sub.id}>
                       <td style={{ fontWeight: 500 }}>{sub.position}</td>
                       <td>{sub.vendorName}</td>
@@ -133,7 +133,7 @@ export default function ConsultantDashboard() {
                       </td>
                     </tr>
                   ))}
-                  {mySubmissions.filter(s => ['Placed', 'Rejected'].includes(s.status)).length === 0 && (
+                  {mySubmissions.filter((s: any) => ['Placed', 'Rejected'].includes(s.status)).length === 0 && (
                     <tr><td colSpan={4} style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-secondary)' }}>No past applications</td></tr>
                   )}
                 </tbody>

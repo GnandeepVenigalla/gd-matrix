@@ -69,23 +69,23 @@ export default function TimesheetsPage() {
     }
   };
 
-  const explicitPending = timesheets.filter(t => t.status === 'Pending' || t.status === 'Pending Submission');
+  const explicitPending = timesheets.filter((t: any) => t.status === 'Pending' || t.status === 'Pending Submission');
   
   // Smart Missing Logic
-  const activeConsultants = consultants.filter(c => c.client && c.client !== 'Bench');
-  const allWeeks = Array.from(new Set(timesheets.map(t => t.week).filter(Boolean)));
+  const activeConsultants = consultants.filter((c: any) => c.client && c.client !== 'Bench');
+  const allWeeks = Array.from(new Set(timesheets.map((t: any) => t.week).filter(Boolean)));
   const targetWeek = allWeeks[allWeeks.length - 1] || 'Apr 01 - Apr 07, 2026';
   
-  const missingConsultants = activeConsultants.filter(c => {
+  const missingConsultants = activeConsultants.filter((c: any) => {
     return !timesheets.some(t => t.consultantId === c._id && t.week === targetWeek);
   });
   
   const pendingCount = explicitPending.length + missingConsultants.length;
   
   // Expose missing names for the alert
-  const missingNames = missingConsultants.map(c => c.name).join(', ');
+  const missingNames = missingConsultants.map((c: any) => c.name).join(', ');
 
-  const approved = timesheets.filter(t => t.status === 'Approved');
+  const approved = timesheets.filter((t: any) => t.status === 'Approved');
 
   
   const handleGenerateInvoice = async () => {
@@ -94,7 +94,7 @@ export default function TimesheetsPage() {
     if (!confirm(confirmMsg)) return;
     
     try {
-      const timesheetIds = filteredTimesheets.map(t => t.id);
+      const timesheetIds = filteredTimesheets.map((t: any) => t.id);
       const res = await fetch(`\${getApiUrl()}/api/invoices/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -120,7 +120,7 @@ export default function TimesheetsPage() {
   };
 
   
-  const filteredTimesheets = timesheets.filter(t => {
+  const filteredTimesheets = timesheets.filter((t: any) => {
     const nameMatch = !filterName || t.consultantName === filterName;
     const statusMatch = filterStatus === 'All' || t.status === filterStatus || (filterStatus === 'Pending' && t.status === 'Pending Submission');
     const weekMatch = (() => {
@@ -148,8 +148,8 @@ export default function TimesheetsPage() {
     return nameMatch && statusMatch && weekMatch;
   });
 
-  const totalFilteredHours = filteredTimesheets.reduce((sum, ts) => sum + (Number(ts.hours) || 0), 0);
-  const totalFilteredInvoice = filteredTimesheets.reduce((sum, ts) => sum + ((Number(ts.hours) || 0) * (Number(ts.payRate) || 0)), 0);
+  const totalFilteredHours = filteredTimesheets.reduce((sum: any, ts: any) => sum + (Number(ts.hours) || 0), 0);
+  const totalFilteredInvoice = filteredTimesheets.reduce((sum: any, ts: any) => sum + ((Number(ts.hours) || 0) * (Number(ts.payRate) || 0)), 0);
   
 
 
@@ -183,7 +183,7 @@ export default function TimesheetsPage() {
           <div className="metric-card yellow">
             <div className="metric-icon yellow"><Clock size={20} /></div>
             <div className="metric-label">Submitted (Under Review)</div>
-            <div className="metric-value">{timesheets.filter(t => t.status === 'Submitted').length}</div>
+            <div className="metric-value">{timesheets.filter((t: any) => t.status === 'Submitted').length}</div>
           </div>
           <div className="metric-card red">
             <div className="metric-icon red"><AlertTriangle size={20} /></div>
@@ -202,7 +202,7 @@ export default function TimesheetsPage() {
               style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', padding: '0.75rem', flex: 1, outline: 'none' }}
             >
               <option value="">All Consultants</option>
-              {consultants.map(c => (
+              {consultants.map((c: any) => (
                 <option key={c._id} value={c.name}>
                   {c.name} {c.client && c.client !== 'Bench' ? `(${c.client})` : '(Bench)'}
                 </option>
@@ -294,7 +294,7 @@ export default function TimesheetsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredTimesheets.map(ts => {
+                {filteredTimesheets.map((ts: any) => {
                   const invoice = (ts.hours || 0) * (ts.payRate || 0); // Dynamic rate based on Bench payRate
                   const overdueDays = getOverdueDays(ts.week);
                   const consultantName = ts.consultantName || 'Unknown';

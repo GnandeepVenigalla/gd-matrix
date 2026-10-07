@@ -67,7 +67,7 @@ export default function EmergencyPage() {
                 <div style={{ padding: 20 }}>
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>Select Emergency Type</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-                    {emergencyTypes.map(e => {
+                    {emergencyTypes.map((e: any) => {
                       const I = e.icon;
                       return (
                         <div key={e.id} onClick={() => setSelectedType(e.id)}
@@ -100,7 +100,7 @@ export default function EmergencyPage() {
                 <Phone size={16} style={{ color: 'var(--accent)' }} /> Emergency Contacts
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {contacts.map((c, i) => (
+                {contacts.map((c: any, i: number) => (
                   <div key={c.name} style={{ padding: '14px 20px', borderBottom: i < contacts.length - 1 ? '1px solid var(--border)' : 'none', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: c.available ? '#eff6ff' : '#f1f5f9', color: c.available ? '#2563eb' : '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
                       {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}

@@ -63,7 +63,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                {['#00F5FF', '#8B5CF6', '#10B981', '#3B82F6', '#F59E0B', '#EF4444'].map(c => (
+                {['#00F5FF', '#8B5CF6', '#10B981', '#3B82F6', '#F59E0B', '#EF4444'].map((c: any) => (
                   <button key={c} onClick={() => setPrimaryColor(c)} style={{ width: 28, height: 28, borderRadius: '50%', background: c, border: primaryColor === c ? '2px solid white' : '2px solid transparent', cursor: 'pointer' }} />
                 ))}
               </div>
@@ -151,7 +151,7 @@ export default function SettingsPage() {
                 { role: 'Manager', desc: 'View all submissions, financials, consultants', icon: '📊' },
                 { role: 'Recruiter', desc: 'Own submissions, own candidates only', icon: '🧑‍💼' },
                 { role: 'Consultant', desc: 'Timesheet upload only (read-only profile)', icon: '💼' },
-              ].map(r => (
+              ].map((r: any) => (
                 <div key={r.role} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>
                   <div style={{ fontSize: 20 }}>{r.icon}</div>
                   <div>

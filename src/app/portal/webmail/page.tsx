@@ -17,7 +17,7 @@ export default function WebmailPage() {
   const [selected, setSelected] = useState<string | null>('e1');
   const [search, setSearch] = useState('');
 
-  const filtered = emails.filter(e => {
+  const filtered = emails.filter((e: any) => {
     if (folder === 'Starred') return e.starred;
     return e.subject.toLowerCase().includes(search.toLowerCase()) || e.from.toLowerCase().includes(search.toLowerCase());
   });
@@ -35,7 +35,7 @@ export default function WebmailPage() {
           <div style={{ padding: '0 12px 12px', borderBottom: '1px solid var(--border)', marginBottom: 8 }}>
             <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.82rem' }}><Send size={13} />Compose</button>
           </div>
-          {folders.map(f => {
+          {folders.map((f: any) => {
             const I = f.icon;
             return (
               <div key={f.label} onClick={() => setFolder(f.label)}
@@ -57,7 +57,7 @@ export default function WebmailPage() {
             </div>
           </div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            {filtered.map(e => (
+            {filtered.map((e: any) => (
               <div key={e.id} onClick={() => setSelected(e.id)}
                 style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', cursor: 'pointer', background: selected === e.id ? '#eff6ff' : !e.read ? '#fafbff' : 'var(--white)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>

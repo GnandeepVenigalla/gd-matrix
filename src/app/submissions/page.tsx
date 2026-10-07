@@ -84,13 +84,13 @@ function SubmissionModal({ onClose }: { onClose: () => void }) {
             <div className="form-group">
               <label>Consultant</label>
               <select value={selectedConsultant} onChange={e => setSelectedConsultant(e.target.value)}>
-                {consultants.map(c => <option key={c.id} value={c.id}>{c.name} ({c.visaType})</option>)}
+                {consultants.map((c: any) => <option key={c.id} value={c.id}>{c.name} ({c.visaType})</option>)}
               </select>
             </div>
             <div className="form-group">
               <label>Vendor / Prime</label>
               <select value={selectedVendor} onChange={e => setSelectedVendor(e.target.value)}>
-                {vendors.map(v => <option key={v.id} value={v.id}>{v.company}</option>)}
+                {vendors.map((v: any) => <option key={v.id} value={v.id}>{v.company}</option>)}
               </select>
             </div>
           </div>
@@ -185,8 +185,8 @@ function KanbanColumn({ col, cards, onAddClick }: { col: { key: Submission['stat
         <span className="kanban-count">{cards.length}</span>
       </div>
       <div className="kanban-col-body" ref={setNodeRef} style={{ minHeight: '150px' }}>
-        <SortableContext items={cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
-          {cards.map(sub => (
+        <SortableContext items={cards.map((c: any) => c.id)} strategy={verticalListSortingStrategy}>
+          {cards.map((sub: any) => (
             <SortableKanbanCard key={sub.id} sub={sub} />
           ))}
         </SortableContext>
@@ -212,10 +212,10 @@ export default function SubmissionsPage() {
   );
 
   const totalRevPotential = items
-    .filter(s => !['Rejected'].includes(s.status))
-    .reduce((sum, s) => sum + s.sellRate * 160, 0);
+    .filter((s: any) => !['Rejected'].includes(s.status))
+    .reduce((sum: any, s: any) => sum + s.sellRate * 160, 0);
   const avgMargin = items.length > 0
-    ? items.reduce((s, sub) => s + (sub.sellRate - sub.buyRate), 0) / items.length
+    ? items.reduce((s: any, sub: any) => s + (sub.sellRate - sub.buyRate), 0) / items.length
     : 0;
 
   const onDragStart = (event: DragStartEvent) => {
@@ -289,8 +289,8 @@ export default function SubmissionsPage() {
       <div className="page-content">
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragOver={onDragOver} onDragEnd={onDragEnd}>
           <div className="kanban-board">
-            {COLUMNS.map(col => {
-              const cards = items.filter(s => s.status === col.key);
+            {COLUMNS.map((col: any) => {
+              const cards = items.filter((s: any) => s.status === col.key);
               return <KanbanColumn key={col.key} col={col} cards={cards} onAddClick={() => setShowModal(true)} />;
             })}
           </div>

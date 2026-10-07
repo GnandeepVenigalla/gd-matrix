@@ -74,7 +74,7 @@ export default function ChatPage() {
 
             {/* Messages */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: 12, background: '#f8fafc' }}>
-              {msgs.map(m => (
+              {msgs.map((m: any) => (
                 <div key={m.id} style={{ display: 'flex', justifyContent: m.from === 'me' ? 'flex-end' : 'flex-start', gap: 8, alignItems: 'flex-end' }}>
                   {m.from === 'recruiter' && <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 11, flexShrink: 0 }}>{recruiter.initials}</div>}
                   <div style={{ maxWidth: '68%' }}>

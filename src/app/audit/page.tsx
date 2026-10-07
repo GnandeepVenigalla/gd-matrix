@@ -18,7 +18,7 @@ export default function AuditPage() {
             <span className="badge badge-cyan">{auditLogs.length} records</span>
           </div>
           <div className="timeline">
-            {auditLogs.map((log, i) => (
+            {auditLogs.map((log: any, i: number) => (
               <div key={log.id} className="timeline-item">
                 <div className="timeline-dot" style={{ background: i % 2 === 0 ? 'var(--cyan-dim)' : 'var(--purple-dim)', border: `1px solid ${i % 2 === 0 ? 'var(--cyan)' : 'var(--purple)'}` }}>
                   <Activity size={12} style={{ color: i % 2 === 0 ? 'var(--cyan)' : 'var(--purple)' }} />

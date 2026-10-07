@@ -38,7 +38,7 @@ export default function PortalCompliance() {
              </div>
 
              <div className="compliance-checklist" style={{ margin: 0 }}>
-               {docs.map((doc, idx) => (
+               {docs.map((doc: any, idx: number) => (
                  <div key={idx} className={`compliance-item ${doc.status ? 'done' : 'missing'}`}>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                      {doc.status ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
