@@ -142,17 +142,6 @@ export default function SettingsPage() {
                 <span className="badge badge-cyan">{(user as any).role === 'employer' ? 'Admin' : (user.title || 'Consultant')}</span>
               </div>
               
-              {/* Mock additional user */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border-subtle)' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
-                  PM
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: 13 }}>Priya M</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>priya@example.com · Own Submissions Only</div>
-                </div>
-                <span className="badge badge-gray">Recruiter</span>
-              </div>
 
               <button className="btn btn-secondary" style={{ width: '100%', marginTop: 12 }}><Users size={14} /> Invite Team Member</button>
             </div>
