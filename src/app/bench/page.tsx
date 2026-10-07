@@ -205,10 +205,31 @@ export default function BenchPage() {
   
   const [editClient, setEditClient] = useState('');
   const [editRate, setEditRate] = useState(0);
+  const [editRecruiter, setEditRecruiter] = useState('');
+  const [recruiters, setRecruiters] = useState<any[]>([]);
 
   useEffect(() => {
     fetchConsultants();
+    fetchRecruiters();
   }, []);
+
+  const fetchRecruiters = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return;
+    try {
+      const u = JSON.parse(userStr);
+      fetch(`${getApiUrl()}/api/recruiters?companyName=` + encodeURIComponent(u.companyName || 'GD Matrix'))
+        .then(r => r.json())
+        .then(data => setRecruiters(Array.isArray(data) ? data : []))
+        .catch(() => {});
+    } catch(e){}
+  };
+
+  const recruiterLabel = (id?: string | null) => {
+    const r = recruiters.find((x: any) => x._id === id) || recruiters[0];
+    if (!r) return '—';
+    return id && recruiters.some((x: any) => x._id === id) ? r.name : `${r.name} (default)`;
+  };
 
   const fetchConsultants = () => {
     const userStr = localStorage.getItem('user');
@@ -230,12 +251,15 @@ export default function BenchPage() {
       const res = await fetch(`${getApiUrl()}/api/consultants/` + editing._id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ client: editClient, payRate: editRate })
+        body: JSON.stringify({ client: editClient, payRate: editRate, recruiterId: editRecruiter || null })
       });
       if (res.ok) {
         setEditing(null);
         fetchConsultants();
-      } else alert('Failed to save');
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || 'Failed to save');
+      }
     } catch(e) {
       alert('Error saving');
     }
@@ -275,6 +299,7 @@ export default function BenchPage() {
                 <th>Role</th>
                 <th>Email</th>
                 <th>Current Client / Project</th>
+                <th>Recruiter / HR</th>
                 <th>Pay Rate</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -282,7 +307,7 @@ export default function BenchPage() {
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>No consultants found. Give them your invite code to sign up!</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No consultants found. Give them your invite code to sign up!</td></tr>
               )}
               {filtered.map((c: any) => (
                 <tr key={c._id}>
@@ -290,6 +315,7 @@ export default function BenchPage() {
                   <td>{c.title || 'Consultant'}</td>
                   <td>{c.email}</td>
                   <td>{c.client || 'Bench'}</td>
+                  <td>{recruiterLabel(c.recruiterId)}</td>
                   <td style={{ fontWeight: 700, color: 'var(--green)' }}>${c.payRate || 0}/hr</td>
                   <td><span className={"badge " + (c.client && c.client !== 'Bench' ? 'badge-blue' : 'badge-gray')}>{c.client && c.client !== 'Bench' ? 'On Project' : 'On Bench'}</span></td>
                   <td>
@@ -297,7 +323,8 @@ export default function BenchPage() {
                       setEditing(c);
                       setEditClient(c.client || 'Bench');
                       setEditRate(c.payRate || 0);
-                    }}>Edit Project / Rate</button>
+                      setEditRecruiter(c.recruiterId || '');
+                    }}>Edit</button>
                   </td>
                 </tr>
               ))}
@@ -321,6 +348,18 @@ export default function BenchPage() {
               <div>
                 <label style={{ display: 'block', marginBottom: 4, fontSize: 13, fontWeight: 500 }}>Pay Rate ($/hr)</label>
                 <input className="input-field" type="number" value={editRate} onChange={e => setEditRate(Number(e.target.value))} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 4, fontSize: 13, fontWeight: 500 }}>Recruiter / HR</label>
+                <select className="input-field" value={editRecruiter} onChange={e => setEditRecruiter(e.target.value)}>
+                  <option value="">Default — {recruiters[0] ? `${recruiters[0].name} (Admin)` : 'Company Admin'}</option>
+                  {recruiters.map((r: any) => (
+                    <option key={r._id} value={r._id}>{r.name} · {r.email}</option>
+                  ))}
+                </select>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 4 }}>
+                  The consultant sees this person under &quot;Your Recruiter&quot; in their portal.
+                </div>
               </div>
             </div>
             <div className="modal-footer">

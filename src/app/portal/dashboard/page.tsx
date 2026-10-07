@@ -8,6 +8,7 @@ export default function ConsultantDashboard() {
   
   const [user, setUser] = useState<any>({ name: 'Consultant', title: 'Developer', companyName: 'GD Matrix' });
   const [liveUser, setLiveUser] = useState<any>(null);
+  const [recruiter, setRecruiter] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -26,6 +27,14 @@ export default function ConsultantDashboard() {
                if (me) setLiveUser(me);
              }
           });
+
+        // Assigned recruiter/HR, or the company admin if none is assigned
+        if (u.id) {
+          fetch(`${getApiUrl()}/api/consultants/${u.id}/recruiter`)
+            .then(r => (r.ok ? r.json() : null))
+            .then(data => { if (data && data.email) setRecruiter(data); })
+            .catch(() => {});
+        }
       } catch(e) {}
     }
   }, []);
@@ -60,7 +69,8 @@ export default function ConsultantDashboard() {
 
   const isOnProject = liveUser && liveUser.client && liveUser.client !== 'Bench';
   const clientName = isOnProject ? liveUser.client : 'None';
-  const recruiterName = user.companyName ? user.companyName + ' Admin' : 'Admin';
+  const recruiterName = recruiter?.name || (user.companyName ? user.companyName + ' Admin' : 'Admin');
+  const recruiterInitials = recruiterName.split(' ').filter(Boolean).map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
 
   const mySubmissions = submissions.filter((s: any) => s.consultantId === 'c001');
 
@@ -189,10 +199,14 @@ export default function ConsultantDashboard() {
             
             <h4 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Recruiter</h4>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div className="avatar" style={{ width: 32, height: 32 }}>{recruiterName.substring(0,2).toUpperCase()}</div>
+              <div className="avatar" style={{ width: 32, height: 32 }}>{recruiterInitials}</div>
               <div>
                 <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>{recruiterName}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>admin@{user.companyName ? user.companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company"}.com</div>
+                {recruiter?.email ? (
+                  <a href={`mailto:${recruiter.email}`} style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{recruiter.email}</a>
+                ) : (
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Not assigned yet</div>
+                )}
               </div>
             </div>
           </div>
