@@ -3,70 +3,62 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Multi-tenant subdomain middleware for GD Matrix.
  *
- * Routing rules (when a tenant subdomain is detected):
- *  - /          → /tenant/[slug]/login   (show consultant login)
- *  - /login     → /tenant/[slug]/login
- *  - /signup    → /tenant/[slug]/signup
- *  - /portal/…  → pass through as-is     (consultant dashboard pages)
- *  - everything else on main domain → normal Next.js routing
+ * A tenant subdomain (e.g. gd-enterprises.gdmatrix.com) serves the normal app
+ * pages. The pages themselves read the tenant from the hostname
+ * (see src/lib/tenantConfig.ts) to show the company branding.
  *
- * Local dev: use meta9.localhost:3001 to simulate meta9.matrix.com
+ * Routing rules on a tenant subdomain:
+ *  - / or /login  → redirect to /auth/employee/login
+ *  - /signup      → redirect to /auth/employee/signup
+ *  - everything else → normal Next.js routing (query string preserved)
+ *
+ * Main domain (gdmatrix.com / www.gdmatrix.com / *.vercel.app / localhost) → normal routing.
  */
 
 const ROOT_SUBDOMAINS = new Set(['www', 'app', 'api', 'mail', 'smtp']);
 
-// Paths that should be served as-is on a tenant subdomain (not rewritten to /tenant/...)
-const TENANT_PASSTHROUGH = ['/portal', '/_next', '/favicon', '/api'];
+function getTenantSlug(host: string): string | null {
+  const hostname = host.split(':')[0].toLowerCase();
+
+  // Vercel preview/production URLs are never tenants
+  if (hostname.endsWith('.vercel.app')) return null;
+
+  const parts = hostname.split('.');
+
+  // Local dev: acme.localhost
+  if (parts.length === 2 && parts[1] === 'localhost') {
+    return ROOT_SUBDOMAINS.has(parts[0]) ? null : parts[0];
+  }
+
+  // Need at least sub.domain.tld
+  if (parts.length < 3) return null;
+
+  const candidate = parts[0];
+  return ROOT_SUBDOMAINS.has(candidate) ? null : candidate;
+}
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const hostname = request.headers.get('host') ?? '';
-
-  // ── Extract subdomain ──
-  const hostWithoutPort = hostname.split(':')[0];
-  const parts = hostWithoutPort.split('.');
-
-  let tenantSlug: string | null = null;
-  if (parts.length >= 2) {
-    const candidate = parts[0];
-    if (!ROOT_SUBDOMAINS.has(candidate)) {
-      tenantSlug = candidate;
-    }
-  }
+  const tenantSlug = getTenantSlug(request.headers.get('host') ?? '');
 
   // No subdomain → employer/main portal, normal routing
   if (!tenantSlug) {
     return NextResponse.next();
   }
 
+  const url = request.nextUrl.clone();
   const currentPath = url.pathname;
 
-  // ── Pass through portal pages and assets untouched ──
-  // e.g. meta9.localhost:3001/portal/dashboard → serve /portal/dashboard normally
-  if (TENANT_PASSTHROUGH.some((prefix) => currentPath.startsWith(prefix))) {
-    return NextResponse.next();
-  }
-
-  // Already internally rewritten — don't double-rewrite
-  if (currentPath.startsWith('/tenant')) {
-    return NextResponse.next();
-  }
-
-  // ── Rewrite auth paths to tenant-specific pages ──
-  // / or /login  → /tenant/[slug]/login
-  // /signup      → /tenant/[slug]/signup
-  let newPath: string;
   if (currentPath === '/' || currentPath === '' || currentPath === '/login') {
-    newPath = `/tenant/${tenantSlug}/login`;
-  } else if (currentPath === '/signup') {
-    newPath = `/tenant/${tenantSlug}/signup`;
-  } else {
-    // Any other unrecognised path on a subdomain → send to login
-    newPath = `/tenant/${tenantSlug}/login`;
+    url.pathname = '/auth/employee/login';
+    return NextResponse.redirect(url);
   }
 
-  url.pathname = newPath;
-  const response = NextResponse.rewrite(url);
+  if (currentPath === '/signup') {
+    url.pathname = '/auth/employee/signup';
+    return NextResponse.redirect(url);
+  }
+
+  const response = NextResponse.next();
   response.headers.set('x-tenant-slug', tenantSlug);
   return response;
 }
