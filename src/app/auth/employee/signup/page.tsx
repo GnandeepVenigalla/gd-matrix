@@ -30,7 +30,7 @@ export default function EmployeeSignupPage() {
     const t = getTenantFromUrl();
     if (t) {
       setTenant(t);
-      setInvitedCompany(t);
+      setInvitedCompany(t.replace(/-/g, ' '));
     }
   }, []);
 
