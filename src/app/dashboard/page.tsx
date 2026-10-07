@@ -66,7 +66,7 @@ export default function DashboardPage() {
     .reduce((sum, t) => sum + ((t.hours || 0) * (t.payRate || 0)), 0);
 
   // We don't have Visa Expiry in DB yet, so default to empty
-  const expiringVisas = []; 
+  const expiringVisas: any[] = []; 
   
   // For now, mock submissions/interviews as 0 since we don't have that DB table yet
   const submissions: any[] = [];
