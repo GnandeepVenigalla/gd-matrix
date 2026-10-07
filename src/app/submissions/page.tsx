@@ -65,8 +65,8 @@ function MarginCalc({ buyRate, sellRate }: { buyRate: number; sellRate: number }
 function SubmissionModal({ onClose }: { onClose: () => void }) {
   const [buyRate, setBuyRate] = useState(55);
   const [sellRate, setSellRate] = useState(78);
-  const [selectedConsultant, setSelectedConsultant] = useState(consultants[0].id);
-  const [selectedVendor, setSelectedVendor] = useState(vendors[0].id);
+  const [selectedConsultant, setSelectedConsultant] = useState(consultants[0]?.id || '');
+  const [selectedVendor, setSelectedVendor] = useState(vendors[0]?.id || '');
 
   return (
     <div className="modal-overlay" onClick={onClose}>

@@ -1,12 +1,25 @@
 'use client';
-import { useState } from 'react';
-import { Settings, Upload, Palette, Users, Shield, Building2, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Settings, Upload, Palette, Users, Shield, Building2, Check, ExternalLink } from 'lucide-react';
 
 export default function SettingsPage() {
   const [primaryColor, setPrimaryColor] = useState('#00F5FF');
   const [saved, setSaved] = useState(false);
+  const [user, setUser] = useState({ name: 'Admin', email: 'admin@company.com', companyName: 'Company Inc', title: 'Owner' });
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        setUser(u);
+      } catch (e) {}
+    }
+  }, []);
 
   const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+
+  const initials = user.name ? user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'AD';
 
   return (
     <>
@@ -28,8 +41,8 @@ export default function SettingsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="card">
               <div className="section-title" style={{ marginBottom: 16 }}>🏢 Organization</div>
-              <div className="form-group"><label>Company Name</label><input defaultValue="GD Enterprises Inc." /></div>
-              <div className="form-group"><label>Admin Email</label><input defaultValue="admin@gdenterprises.com" /></div>
+              <div className="form-group"><label>Company Name</label><input defaultValue={user.companyName} /></div>
+              <div className="form-group"><label>Admin Email</label><input defaultValue={user.email} /></div>
               <div className="form-group">
                 <label>Company Logo</label>
                 <div style={{ border: '2px dashed var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '20px', textAlign: 'center', cursor: 'pointer' }}>
@@ -56,11 +69,45 @@ export default function SettingsPage() {
               </div>
               <div className="form-group">
                 <label>Platform Name</label>
-                <input defaultValue="GD Matrix" />
+                <input defaultValue={user.companyName} />
               </div>
               <div className="form-group">
                 <label>Subscription Plan</label>
                 <select><option>Starter (1 recruiter)</option><option>Professional (5 recruiters)</option><option>Enterprise (Unlimited)</option></select>
+              </div>
+            </div>
+
+            {/* Consultant Portal Link */}
+            <div className="card">
+              <div className="section-title" style={{ marginBottom: 16 }}>🔗 Consultant Portal Access</div>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12, lineHeight: 1.4 }}>
+                This is the custom onboarding link for your consultants. It automatically applies your company name and invite code.
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                <input 
+                  readOnly 
+                  value={typeof window !== 'undefined' ? `${window.location.origin}/auth/employee/signup?company=${user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal'}&code=${(user as any).inviteCode || ''}` : ''} 
+                  style={{ flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontSize: 13 }} 
+                />
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => window.open(`/auth/employee/signup?company=${user.companyName ? encodeURIComponent(user.companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) : 'portal'}&code=${(user as any).inviteCode || ''}`, '_blank')}
+                  title="Open Consultant Portal"
+                >
+                  <ExternalLink size={14} /> Open
+                </button>
+              </div>
+
+              <div className="section-title" style={{ marginBottom: 12, fontSize: 13 }}>🎟️ Company Invite Code</div>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8, lineHeight: 1.4 }}>
+                This is your unique organization code. It is already embedded in the link above.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input 
+                  readOnly 
+                  value={(user as any).inviteCode || 'Relogin to generate'} 
+                  style={{ flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '2px', fontFamily: 'monospace' }} 
+                />
               </div>
             </div>
           </div>
@@ -69,22 +116,31 @@ export default function SettingsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="card">
               <div className="section-title" style={{ marginBottom: 16 }}>👥 Team Members</div>
-              {[
-                { name: 'Admin Owner', role: 'Owner', email: 'admin@gd.com', avatar: 'AO', access: 'Full Access', color: 'var(--cyan)' },
-                { name: 'Alex Kim', role: 'Senior Recruiter', email: 'alex@gd.com', avatar: 'AK', access: 'Own Submissions Only', color: 'var(--purple)' },
-                { name: 'Priya M', role: 'Recruiter', email: 'priya@gd.com', avatar: 'PM', access: 'Own Submissions Only', color: 'var(--green)' },
-              ].map(member => (
-                <div key={member.email} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border-subtle)' }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: member.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
-                    {member.avatar}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{member.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{member.email} · {member.access}</div>
-                  </div>
-                  <span className={`badge ${member.role === 'Owner' ? 'badge-cyan' : 'badge-gray'}`}>{member.role}</span>
+              
+              {/* Active Logged in user */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
+                  {initials}
                 </div>
-              ))}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{user.name} (You)</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{user.email} · Full Access</div>
+                </div>
+                <span className="badge badge-cyan">{(user as any).role === 'employer' ? 'Admin' : (user.title || 'Consultant')}</span>
+              </div>
+              
+              {/* Mock additional user */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
+                  PM
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>Priya M</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>priya@example.com · Own Submissions Only</div>
+                </div>
+                <span className="badge badge-gray">Recruiter</span>
+              </div>
+
               <button className="btn btn-secondary" style={{ width: '100%', marginTop: 12 }}><Users size={14} /> Invite Team Member</button>
             </div>
 

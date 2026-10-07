@@ -1,5 +1,6 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { getApiUrl } from '@/lib/apiConfig';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Users, Search, Filter, Plus, FileText, Eye, Download,
   CheckCircle, XCircle, AlertTriangle, Shield, Clock,
@@ -194,75 +195,75 @@ function ConsultantDetailModal({ consultant, onClose }: { consultant: Consultant
   );
 }
 
+
 export default function BenchPage() {
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [visaFilter, setVisaFilter] = useState('All');
   const [selected, setSelected] = useState<string[]>([]);
-  const [showHotlist, setShowHotlist] = useState(false);
-  const [viewConsultant, setViewConsultant] = useState<Consultant | null>(null);
+  const [viewConsultant, setViewConsultant] = useState<any | null>(null);
+  const [consultants, setConsultants] = useState<any[]>([]);
+  const [editing, setEditing] = useState<any | null>(null);
+  
+  const [editClient, setEditClient] = useState('');
+  const [editRate, setEditRate] = useState(0);
 
-  const filtered = useMemo(() => allConsultants.filter(c => {
+  useEffect(() => {
+    fetchConsultants();
+  }, []);
+
+  const fetchConsultants = () => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        fetch(`\${getApiUrl()}/api/consultants?companyName=` + encodeURIComponent(u.companyName || 'GD Matrix'))
+          .then(r => r.json())
+          .then(data => {
+             setConsultants(Array.isArray(data) ? data : []);
+          });
+      } catch(e){}
+    }
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    try {
+      const res = await fetch(`\${getApiUrl()}/api/consultants/` + editing._id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client: editClient, payRate: editRate })
+      });
+      if (res.ok) {
+        setEditing(null);
+        fetchConsultants();
+      } else alert('Failed to save');
+    } catch(e) {
+      alert('Error saving');
+    }
+  };
+
+  const filtered = useMemo(() => consultants.filter(c => {
     const q = search.toLowerCase();
-    const matchSearch = !q || c.name.toLowerCase().includes(q) || c.techStack.some(s => s.toLowerCase().includes(q)) || c.location.toLowerCase().includes(q);
-    const matchStatus = statusFilter === 'All' || c.status === statusFilter;
-    const matchVisa = visaFilter === 'All' || c.visaType === visaFilter;
-    return matchSearch && matchStatus && matchVisa;
-  }), [search, statusFilter, visaFilter]);
-
-  const toggleSelect = (id: string) => setSelected(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
-  const selectedConsultants = allConsultants.filter(c => selected.includes(c.id));
+    return !q || c.name.toLowerCase().includes(q) || (c.client || 'Bench').toLowerCase().includes(q);
+  }), [search, consultants]);
 
   return (
     <>
       <div className="top-bar">
         <div className="top-bar-title">
           <h1>The Bench</h1>
-          <p>{filtered.length} consultants · {allConsultants.filter(c => c.status === 'On Bench').length} available</p>
-        </div>
-        <div className="top-bar-actions">
-          {selected.length > 0 && (
-            <button className="btn btn-secondary" onClick={() => setShowHotlist(true)}>
-              <Download size={14} /> Export Hotlist ({selected.length})
-            </button>
-          )}
-          <button className="btn btn-primary"><Plus size={14} /> Add Consultant</button>
+          <p>{filtered.length} consultants registered to your company</p>
         </div>
       </div>
 
       <div className="page-content">
-        {/* Filters */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-          <div className="search-wrapper">
+        <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+          <div className="search-wrapper" style={{ flex: 1, maxWidth: 400 }}>
             <Search size={15} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by name, skill, location..."
+              placeholder="Search by name or client..."
             />
-          </div>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ minWidth: 140 }}>
-            <option>All</option>
-            <option>On Bench</option>
-            <option>On Project</option>
-            <option>Interview</option>
-            <option>Unavailable</option>
-          </select>
-          <select value={visaFilter} onChange={e => setVisaFilter(e.target.value)} style={{ minWidth: 140 }}>
-            <option>All</option>
-            <option>H1B</option>
-            <option>OPT</option>
-            <option>STEM OPT</option>
-            <option>CPT</option>
-            <option>H4 EAD</option>
-            <option>GC-EAD</option>
-            <option>Green Card</option>
-          </select>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-            {selected.length > 0 && (
-              <span style={{ fontSize: 12, color: 'var(--cyan)' }}>{selected.length} selected</span>
-            )}
-            <button className="btn-icon" onClick={() => setSelected([])} title="Clear selection"><RefreshCw size={14} /></button>
           </div>
         </div>
 
@@ -270,93 +271,65 @@ export default function BenchPage() {
           <table>
             <thead>
               <tr>
-                <th style={{ width: 36 }}>
-                  <input type="checkbox" onChange={e => setSelected(e.target.checked ? filtered.map(c => c.id) : [])} checked={selected.length === filtered.length && filtered.length > 0} style={{ cursor: 'pointer' }} />
-                </th>
-                <th>Consultant</th>
-                <th>Tech Stack</th>
-                <th>Visa</th>
-                <th>Visa Expiry</th>
-                <th>Exp.</th>
-                <th>Location</th>
-                <th>Buy Rate</th>
-                <th>Compliance</th>
+                <th>Consultant Name</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Current Client / Project</th>
+                <th>Pay Rate</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(c => {
-                const score = getComplianceScore(c.compliance);
-                const urgency = getVisaUrgency(c.visaExpiry);
-                const days = getDaysUntil(c.visaExpiry);
-                return (
-                  <tr key={c.id} style={{ opacity: c.status === 'Unavailable' ? 0.6 : 1 }}>
-                    <td>
-                      <input type="checkbox" checked={selected.includes(c.id)} onChange={() => toggleSelect(c.id)} style={{ cursor: 'pointer' }} />
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--cyan), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--bg-primary)', flexShrink: 0 }}>
-                          {c.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: 13 }}>{c.name}</div>
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.techStack[0]}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 200 }}>
-                        {c.techStack.slice(0, 3).map(s => <span key={s} className="chip">{s}</span>)}
-                        {c.techStack.length > 3 && <span className="chip">+{c.techStack.length - 3}</span>}
-                      </div>
-                    </td>
-                    <td><span className={`badge ${VISA_COLORS[c.visaType] || 'badge-gray'}`}>{c.visaType}</span></td>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: urgency === 'critical' ? 'var(--red)' : urgency === 'warning' ? 'var(--yellow)' : 'var(--text-primary)' }}>
-                          {c.visaExpiry}
-                        </span>
-                        {urgency !== 'ok' && (
-                          <span style={{ fontSize: 10, color: urgency === 'critical' ? 'var(--red)' : 'var(--yellow)' }}>
-                            {urgency === 'critical' ? '🔴' : '🟡'} {days}d left
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{c.experience}y</td>
-                    <td style={{ color: 'var(--text-secondary)', fontSize: 12 }}>{c.location}</td>
-                    <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: 'var(--green)' }}>${c.buyRate}/hr</td>
-                    <td style={{ minWidth: 130 }}><ComplianceMeter score={score} /></td>
-                    <td>
-                      <span className={`badge ${STATUS_COLORS[c.status] || 'badge-gray'}`}>{c.status}</span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 4 }}>
-                        <button className="btn-icon" onClick={() => setViewConsultant(c)} title="View Profile"><Eye size={13} /></button>
-                        <button className="btn-icon" title="Mask Resume"><Shield size={13} /></button>
-                        <button className="btn-icon" title="Schedule Interview"><Clock size={13} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>No consultants found. Give them your invite code to sign up!</td></tr>
+              )}
+              {filtered.map(c => (
+                <tr key={c._id}>
+                  <td style={{ fontWeight: 600 }}>{c.name}</td>
+                  <td>{c.title || 'Consultant'}</td>
+                  <td>{c.email}</td>
+                  <td>{c.client || 'Bench'}</td>
+                  <td style={{ fontWeight: 700, color: 'var(--green)' }}>${c.payRate || 0}/hr</td>
+                  <td><span className={"badge " + (c.client && c.client !== 'Bench' ? 'badge-blue' : 'badge-gray')}>{c.client && c.client !== 'Bench' ? 'On Project' : 'On Bench'}</span></td>
+                  <td>
+                    <button className="btn btn-secondary btn-sm" onClick={() => {
+                      setEditing(c);
+                      setEditClient(c.client || 'Bench');
+                      setEditRate(c.payRate || 0);
+                    }}>Edit Project / Rate</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-
-        {filtered.length === 0 && (
-          <div className="empty-state">
-            <div className="empty-state-icon"><Users size={24} /></div>
-            <h3>No consultants found</h3>
-            <p>Try adjusting your search or filters</p>
-          </div>
-        )}
       </div>
 
-      {showHotlist && <HotlistModal selected={selectedConsultants} onClose={() => setShowHotlist(false)} />}
-      {viewConsultant && <ConsultantDetailModal consultant={viewConsultant} onClose={() => setViewConsultant(null)} />}
+      {editing && (
+        <div className="modal-overlay" onClick={() => setEditing(null)}>
+          <div className="modal" style={{ maxWidth: 400 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-title">Edit {editing.name}</div>
+              <button className="modal-close" onClick={() => setEditing(null)}><XCircle size={18} /></button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: 4, fontSize: 13, fontWeight: 500 }}>Client / Project Name</label>
+                <input className="input-field" value={editClient} onChange={e => setEditClient(e.target.value)} placeholder="e.g. Infosys BPO" />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 4, fontSize: 13, fontWeight: 500 }}>Pay Rate ($/hr)</label>
+                <input className="input-field" type="number" value={editRate} onChange={e => setEditRate(Number(e.target.value))} />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setEditing(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={saveEdit}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

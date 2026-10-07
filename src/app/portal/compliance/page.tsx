@@ -3,7 +3,13 @@ import { consultants } from '@/lib/mockData';
 import { ShieldAlert, CheckCircle, UploadCloud, FileText, AlertTriangle } from 'lucide-react';
 
 export default function PortalCompliance() {
-  const me = consultants.find(c => c.id === 'c001')!;
+  const me = consultants.find(c => c.id === 'c001') || {
+    visaType: 'H1B',
+    visaExpiry: '2025-10-01',
+    passportExpiry: '2027-05-15',
+    i94Expiry: '2025-10-01',
+    compliance: { passport: true, i94: true, lca: false, i797: false }
+  };
 
   const docs = [
     { name: 'Passport', required: true, status: me.compliance.passport, expiry: me.passportExpiry },

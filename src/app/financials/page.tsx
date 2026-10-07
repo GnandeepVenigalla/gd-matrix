@@ -14,7 +14,7 @@ const totalPaid = paid.reduce((s, i) => s + i.amount, 0);
 const totalAP = allInvoices.reduce((s, i) => s + i.hours * (i.rate * 0.73), 0);
 
 function InvoiceModal({ onClose }: { onClose: () => void }) {
-  const [selectedSub, setSelectedSub] = useState(submissions[0].id);
+  const [selectedSub, setSelectedSub] = useState(submissions[0]?.id || '');
   const [hours, setHours] = useState(160);
   const sub = submissions.find(s => s.id === selectedSub);
   const amount = sub ? hours * sub.sellRate : 0;

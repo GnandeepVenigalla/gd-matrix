@@ -1,30 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { getApiUrl } from '@/lib/apiConfig';
+import { useState, useEffect } from 'react';
 import {
   Users, DollarSign, AlertTriangle, Clock, TrendingUp, TrendingDown,
   ArrowRight, CheckCircle, XCircle, Calendar, Zap, Bell, RefreshCw
 } from 'lucide-react';
-import {
-  consultants, submissions, invoices, auditLogs,
-  getVisaUrgency, getDaysUntil
-} from '@/lib/mockData';
+import { getVisaUrgency, getDaysUntil } from '@/lib/mockData';
 
-const expiringVisas = consultants.filter(c => getVisaUrgency(c.visaExpiry) !== 'ok');
-const onBench = consultants.filter(c => c.status === 'On Bench');
-const onProject = consultants.filter(c => c.status === 'On Project');
-const monthlyRevenue = onProject.reduce((s, c) => {
-  const sub = submissions.find(s => s.consultantId === c.id && s.status === 'Placed');
-  return s + (sub ? sub.sellRate * 160 : c.buyRate * 1.4 * 160);
-}, 0);
-const pendingInvoices = invoices.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
-const openInterviews = submissions.filter(s => ['Round 1', 'Round 2', 'Offer'].includes(s.status));
-
-function TopBar() {
+function TopBar({ user }: { user: any }) {
   return (
     <div className="top-bar">
       <div className="top-bar-title">
         <h1>Command Center</h1>
-        <p>Welcome back, Alex — here's what needs your attention today</p>
+        <p>Welcome back{user?.name ? ', ' + user.name.split(' ')[0] : ''} — here's what needs your attention today</p>
       </div>
       <div className="top-bar-actions">
         <button className="btn-icon"><RefreshCw size={15} /></button>
@@ -40,12 +28,56 @@ function TopBar() {
   );
 }
 
+
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [user, setUser] = useState<any>(null);
+  
+  const [consultants, setConsultants] = useState<any[]>([]);
+  const [timesheets, setTimesheets] = useState<any[]>([]);
 
-  return (
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        setUser(u);
+        const comp = encodeURIComponent(u.companyName || 'GD Matrix');
+        
+        fetch(`\${getApiUrl()}/api/consultants?companyName=` + comp)
+          .then(r => r.json())
+          .then(data => setConsultants(Array.isArray(data) ? data : []));
+          
+        fetch(`\${getApiUrl()}/api/timesheets`)
+          .then(r => r.json())
+          .then(data => setTimesheets(Array.isArray(data) ? data : []));
+          
+      } catch(e) {}
+    }
+  }, []);
+
+  // Compute metrics from real DB data
+  const onBench = consultants.filter(c => !c.client || c.client === 'Bench');
+  const onProject = consultants.filter(c => c.client && c.client !== 'Bench');
+  
+  // Calculate revenue from approved timesheets
+  const monthlyRevenue = timesheets
+    .filter(t => t.status === 'Approved')
+    .reduce((sum, t) => sum + ((t.hours || 0) * (t.payRate || 0)), 0);
+
+  // We don't have Visa Expiry in DB yet, so default to empty
+  const expiringVisas = []; 
+  
+  // For now, mock submissions/interviews as 0 since we don't have that DB table yet
+  const submissions: any[] = [];
+  const openInterviews: any[] = [];
+  const invoices: any[] = [];
+  const auditLogs: any[] = [];
+
+  const pendingInvoices = 0;
+return (
     <>
-      <TopBar />
+      <TopBar user={user} />
       <div className="page-content">
 
         {/* Alerts */}
@@ -236,10 +268,10 @@ export default function DashboardPage() {
               {/* Quick Stats */}
               <div className="section-title" style={{ marginBottom: 12, fontSize: 13 }}>Today's Snapshot</div>
               {[
-                { label: 'Resumes Sent', value: 4, color: 'var(--cyan)' },
-                { label: 'Interviews Scheduled', value: 2, color: 'var(--purple)' },
-                { label: 'Timesheets Received', value: 7, color: 'var(--green)' },
-                { label: 'Invoices Generated', value: 1, color: 'var(--yellow)' },
+                { label: 'Resumes Sent', value: submissions.length, color: 'var(--cyan)' },
+                { label: 'Interviews Scheduled', value: openInterviews.length, color: 'var(--purple)' },
+                { label: 'Timesheets Received', value: timesheets.filter(t => t.status === 'Submitted' || t.status === 'Pending').length, color: 'var(--green)' },
+                { label: 'Invoices Generated', value: invoices.length, color: 'var(--yellow)' },
               ].map(s => (
                 <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-subtle)' }}>
                   <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{s.label}</span>

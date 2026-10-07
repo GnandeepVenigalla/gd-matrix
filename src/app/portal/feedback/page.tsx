@@ -2,40 +2,7 @@
 import { useState } from 'react';
 import { Star, MessageSquare, CheckCircle, XCircle, Clock, TrendingUp, BookOpen, ChevronRight } from 'lucide-react';
 
-const feedbackData = [
-  {
-    id: 'fb001', type: 'Interview', company: 'Infosys BPO', role: 'Java Developer', date: '2026-04-05',
-    round: 'Round 1', result: 'Passed', score: 78,
-    areas: { communication: 82, technical: 74, problemSolving: 79 },
-    recruiterNotes: 'Good foundational Java knowledge. Could improve on system design explanations. Work on structuring answers with STAR method.',
-    focusAreas: ['System Design concepts', 'Spring Boot internals', 'STAR method for behavioral'],
-    recruiter: 'Alex Kim',
-  },
-  {
-    id: 'fb002', type: 'Interview', company: 'Wipro Staffing', role: 'Full Stack Developer', date: '2026-03-28',
-    round: 'Client Screening', result: 'Passed', score: 85,
-    areas: { communication: 88, technical: 82, problemSolving: 85 },
-    recruiterNotes: 'Excellent communication skills. Client was impressed with the React experience. Strong candidate.',
-    focusAreas: ['Docker & containerization basics', 'REST API design patterns'],
-    recruiter: 'Alex Kim',
-  },
-  {
-    id: 'fb003', type: 'Assessment', company: 'Capgemini', role: 'Java Developer', date: '2026-03-15',
-    round: 'Technical Assessment', result: 'Rejected', score: 54,
-    areas: { communication: 60, technical: 48, problemSolving: 55 },
-    recruiterNotes: 'Struggled with advanced Kubernetes concepts and multi-threading. Need to strengthen these areas before next submission to a similar client.',
-    focusAreas: ['Kubernetes orchestration', 'Java multi-threading & concurrency', 'Microservices architecture'],
-    recruiter: 'Priya M',
-  },
-  {
-    id: 'fb004', type: 'Interview', company: 'HCL Technologies', role: 'Java Developer', date: '2026-02-20',
-    round: 'Round 2', result: 'Passed', score: 91,
-    areas: { communication: 95, technical: 88, problemSolving: 90 },
-    recruiterNotes: 'Outstanding performance. Client loved the project walkthrough. Offer stage next.',
-    focusAreas: ['Salary negotiation prep', 'Benefits discussion'],
-    recruiter: 'Alex Kim',
-  },
-];
+const feedbackData: any[] = [];
 
 function ScoreDial({ score }: { score: number }) {
   const color = score >= 80 ? '#22c55e' : score >= 65 ? '#f59e0b' : '#ef4444';
@@ -52,7 +19,7 @@ function ScoreDial({ score }: { score: number }) {
 export default function FeedbackPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const detail = feedbackData.find(f => f.id === selected);
-  const avg = Math.round(feedbackData.reduce((s, f) => s + f.score, 0) / feedbackData.length);
+  const avg = feedbackData.length ? Math.round(feedbackData.reduce((s, f) => s + f.score, 0) / feedbackData.length) : 0;
   const passed = feedbackData.filter(f => f.result === 'Passed').length;
 
   return (
@@ -80,6 +47,11 @@ export default function FeedbackPage() {
         <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1.2fr' : '1fr', gap: 16 }}>
           {/* List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {feedbackData.length === 0 && (
+              <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '12px' }}>
+                No feedback data available. Complete an interview to see your scores.
+              </div>
+            )}
             {feedbackData.map(f => (
               <div key={f.id} className="card" onClick={() => setSelected(selected === f.id ? null : f.id)}
                 style={{ cursor: 'pointer', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, border: selected === f.id ? '1.5px solid var(--accent)' : '1px solid var(--border)' }}>

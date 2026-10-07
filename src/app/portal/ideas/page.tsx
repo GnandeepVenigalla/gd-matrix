@@ -2,20 +2,7 @@
 import { useState } from 'react';
 import { Shield, Plus, CheckCircle, Clock, AlertTriangle, FileText, Lock, Download, Eye } from 'lucide-react';
 
-const ideas = [
-  {
-    id: 'id001', title: 'Automated Hotlist Generator', description: 'A one-click system to auto-generate and email available consultant profiles to vendor mailing lists based on skill filters.',
-    category: 'Automation', registeredAt: '2026-03-15', status: 'Registered', refCode: 'GDM-IP-2026-001', registeredBy: 'Arjun Sharma',
-  },
-  {
-    id: 'id002', title: 'AI-Powered Resume Masker', description: 'Use NLP to intelligently redact PII from resumes while preserving technical achievements, then apply GD Matrix branding.',
-    category: 'AI/ML', registeredAt: '2026-03-28', status: 'Pending Review', refCode: 'GDM-IP-2026-002', registeredBy: 'Arjun Sharma',
-  },
-  {
-    id: 'id003', title: 'Vendor Scorecard Analytics', description: 'Dashboard to track vendor interview-to-placement ratios, response times, and payment reliability to rank vendor relationships.',
-    category: 'Analytics', registeredAt: '2026-04-01', status: 'Registered', refCode: 'GDM-IP-2026-003', registeredBy: 'Arjun Sharma',
-  },
-];
+const ideas: any[] = [];
 
 const categories = ['Automation', 'AI/ML', 'Analytics', 'Product Feature', 'Process Improvement', 'Other'];
 

@@ -6,13 +6,7 @@ type Msg = { id: string; from: 'me' | 'recruiter'; text: string; time: string; r
 
 const recruiter = { name: 'Alex Kim', role: 'Sr. Recruiter', initials: 'AK', status: 'online' };
 
-const initialMessages: Msg[] = [
-  { id: 'm1', from: 'recruiter', text: "Hi Arjun! Great job on the Infosys Round 1 yesterday. The client was very impressed with your Spring Boot answers.", time: '9:02 AM', read: true },
-  { id: 'm2', from: 'me', text: "Thank you Alex! I was a bit nervous about the system design part.", time: '9:05 AM', read: true },
-  { id: 'm3', from: 'recruiter', text: "That's natural. For the Round 2, I'd recommend studying distributed systems — specifically CAP theorem and eventual consistency. I'll share some resources shortly.", time: '9:08 AM', read: true },
-  { id: 'm4', from: 'me', text: "That would be really helpful. When is Round 2 scheduled?", time: '9:10 AM', read: true },
-  { id: 'm5', from: 'recruiter', text: "They're targeting next Thursday. I'll confirm by EOD. Also, make sure your LinkedIn is updated — the client checks it.", time: '9:11 AM', read: false },
-];
+const initialMessages: Msg[] = [];
 
 export default function ChatPage() {
   const [msgs, setMsgs] = useState<Msg[]>(initialMessages);

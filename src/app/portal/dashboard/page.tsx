@@ -1,9 +1,67 @@
 'use client';
-import { consultants, submissions } from '@/lib/mockData';
-import { MapPin, Building2, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { getApiUrl } from '@/lib/apiConfig';
+import { useState, useEffect } from 'react';
+const submissions: any[] = [];
+import { MapPin, Building2, Calendar, Clock, ArrowRight, Edit, Save } from 'lucide-react';
 
 export default function ConsultantDashboard() {
-  const me = consultants.find(c => c.id === 'c001')!;
+  
+  const [user, setUser] = useState<any>({ name: 'Consultant', title: 'Developer', companyName: 'GD Matrix' });
+  const [liveUser, setLiveUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        if (u.name) setUser(u);
+        
+        // Fetch live user status to get their assigned client
+        const comp = encodeURIComponent(u.companyName || 'GD Matrix');
+        fetch(`\${getApiUrl()}/api/consultants?companyName=` + comp)
+          .then(r => r.json())
+          .then(data => {
+             if (Array.isArray(data)) {
+               const me = data.find(c => c._id === u.id);
+               if (me) setLiveUser(me);
+             }
+          });
+      } catch(e) {}
+    }
+  }, []);
+
+  
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', location: '', experience: '' });
+
+  const handleEdit = () => {
+    setEditForm({
+      title: liveUser?.title || user.title || 'Consultant',
+      location: liveUser?.location || 'Remote',
+      experience: liveUser?.experience || '5 Years'
+    });
+    setEditMode(true);
+  };
+
+  const handleSave = async () => {
+    if (!liveUser) return;
+    try {
+      await fetch(`\${getApiUrl()}/api/consultants/` + liveUser._id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+      setLiveUser({ ...liveUser, ...editForm });
+      setEditMode(false);
+    } catch(e) {
+      alert('Failed to save profile');
+    }
+  };
+
+  const isOnProject = liveUser && liveUser.client && liveUser.client !== 'Bench';
+  const clientName = isOnProject ? liveUser.client : 'None';
+  const recruiterName = user.companyName ? user.companyName + ' Admin' : 'Admin';
+
   const mySubmissions = submissions.filter(s => s.consultantId === 'c001');
 
   const activeSubmissions = mySubmissions.filter(s => ['Submitted', 'Client Screening', 'Round 1', 'Round 2', 'Offer'].includes(s.status));
@@ -12,7 +70,7 @@ export default function ConsultantDashboard() {
     <>
       <div className="top-bar">
         <div className="top-bar-title">
-          <h1>Welcome back, {me.name.split(' ')[0]}</h1>
+          <h1>Welcome back, {user.name.split(' ')[0]}</h1>
           <p>Here is the status of your current applications and assignments</p>
         </div>
       </div>
@@ -87,23 +145,43 @@ export default function ConsultantDashboard() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="card metric-card metric-card-cyan">
-            <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>My Profile</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>My Profile</h3>
+              {editMode ? (
+                <button onClick={handleSave} className="btn-icon" style={{ color: 'var(--cyan)' }}><Save size={16}/></button>
+              ) : (
+                <button onClick={handleEdit} className="btn-icon"><Edit size={16}/></button>
+              )}
+            </div>
+            
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Status</span>
-                <span className="badge badge-cyan">{me.status}</span>
+                {isOnProject ? <span className="badge badge-blue">On Project</span> : <span className="badge badge-cyan">On Bench</span>}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Role</span>
-                <span style={{ fontWeight: 500 }}>{me.techStack[0]}</span>
+                {editMode ? (
+                  <input className="input-sm" style={{ width: 120, textAlign: 'right' }} value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} />
+                ) : (
+                  <span style={{ fontWeight: 500 }}>{liveUser?.title || user.title || 'Consultant'}</span>
+                )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Location</span>
-                <span>{me.location}</span>
+                {editMode ? (
+                  <input className="input-sm" style={{ width: 120, textAlign: 'right' }} value={editForm.location} onChange={e => setEditForm({...editForm, location: e.target.value})} />
+                ) : (
+                  <span>{liveUser?.location || 'Remote'}</span>
+                )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Experience</span>
-                <span>{me.experience} Years</span>
+                {editMode ? (
+                  <input className="input-sm" style={{ width: 120, textAlign: 'right' }} value={editForm.experience} onChange={e => setEditForm({...editForm, experience: e.target.value})} />
+                ) : (
+                  <span>{liveUser?.experience || '5 Years'}</span>
+                )}
               </div>
             </div>
             
@@ -111,10 +189,10 @@ export default function ConsultantDashboard() {
             
             <h4 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Recruiter</h4>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div className="avatar" style={{ width: 32, height: 32 }}>AK</div>
+              <div className="avatar" style={{ width: 32, height: 32 }}>{recruiterName.substring(0,2).toUpperCase()}</div>
               <div>
-                <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>Alex Kim</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>alex@gd.com</div>
+                <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>{recruiterName}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>admin@{user.companyName ? user.companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company"}.com</div>
               </div>
             </div>
           </div>
@@ -122,13 +200,7 @@ export default function ConsultantDashboard() {
           <div className="card metric-card metric-card-yellow">
              <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Calendar size={18}/> Upcoming Interviews</h3>
              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-               You have 1 interview scheduled this week.
-             </div>
-             <div style={{ padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', borderLeft: '3px solid var(--yellow)' }}>
-                <strong style={{ display: 'block', marginBottom: '0.25rem' }}>Round 1 - Infosys BPO</strong>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <Calendar size={14}/> Tomorrow at 10:00 AM PST
-                </div>
+               You have 0 interviews scheduled this week.
              </div>
           </div>
         </div>

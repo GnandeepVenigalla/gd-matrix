@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   LayoutDashboard, Users, Send, DollarSign, Building2,
   FileText, Settings, ShieldCheck, Bell, LogOut, Activity, TrendingUp,
@@ -49,15 +50,38 @@ const nav: NavSection[] = [
   },
 ];
 
+import Logo from './Logo';
+
 export default function Sidebar() {
   const pathname = usePathname();
+  const [user, setUser] = useState({ name: 'Alex Kim', title: 'Sr. Recruiter', company: 'GD Matrix' });
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        if (u.name) {
+          setUser({
+            name: u.name,
+            title: u.role === 'employer' ? 'Admin' : (u.title || 'Consultant'),
+            company: u.companyName || 'GD Matrix'
+          });
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
   return (
     <aside className="sidebar">
       <Link href="/dashboard" className="sidebar-logo">
-        <div className="sidebar-logo-icon">GD</div>
+        <div className="sidebar-logo-icon" style={{ background: 'transparent', padding: 0 }}>
+          <Logo style={{ width: 28, height: 28, color: 'var(--accent, #1e3a8a)' }} />
+        </div>
         <div className="sidebar-logo-text">
-          <span className="sidebar-logo-name">GD Matrix</span>
+          <span className="sidebar-logo-name">{user.company}</span>
           <span className="sidebar-logo-sub">Talent OS</span>
         </div>
       </Link>
@@ -83,20 +107,24 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Temp Switch to Portal */}
-      <div style={{ padding: '0 1rem', marginTop: 'auto', marginBottom: '1rem' }}>
-         <Link href="/portal/dashboard" className="btn btn-secondary w-full" style={{ justifyContent: 'center' }}>
-            Switch to Portal
-         </Link>
-      </div>
-
       <div className="sidebar-footer">
-        <div className="avatar">AK</div>
+        <div className="avatar">{initials}</div>
         <div className="avatar-info">
-          <div className="avatar-name">Alex Kim</div>
-          <div className="avatar-role">Sr. Recruiter</div>
+          <div className="avatar-name">{user.name}</div>
+          <div className="avatar-role">{user.title}</div>
         </div>
-        <button className="btn-icon" title="Sign out" style={{ marginLeft: 'auto' }}><LogOut /></button>
+        <button 
+          className="btn-icon" 
+          title="Sign out" 
+          style={{ marginLeft: 'auto' }}
+          onClick={() => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = '/auth';
+          }}
+        >
+          <LogOut />
+        </button>
       </div>
     </aside>
   );

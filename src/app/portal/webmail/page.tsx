@@ -2,14 +2,7 @@
 import { Inbox, Send, Star, Archive, Trash2, Search, RefreshCw, Paperclip, MoreHorizontal, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-const emails = [
-  { id: 'e1', from: 'Alex Kim', email: 'alex@gdmatrix.com', subject: 'Timesheet Approved – Week of Apr 7', preview: 'Hi Arjun, your timesheet for the week of Apr 7 has been approved. Payment will be processed...', date: 'Today, 9:14 AM', read: false, starred: true, tag: 'Timesheet', tagColor: '#2563eb' },
-  { id: 'e2', from: 'Infosys BPO', email: 'noreply@infosys.com', subject: 'Interview Confirmation – Round 2 (Java Dev)', preview: 'This is to confirm your Round 2 interview scheduled for Thursday April 18 at 10:00 AM PST...', date: 'Yesterday', read: false, starred: false, tag: 'Interview', tagColor: '#7c3aed' },
-  { id: 'e3', from: 'Priya M', email: 'priya@gdmatrix.com', subject: 'Updated Resume – Please Review', preview: 'Arjun, I have updated your resume with GD Matrix branding. Please review and confirm if...', date: 'Apr 15', read: true, starred: true, tag: 'Action Required', tagColor: '#d97706' },
-  { id: 'e4', from: 'HR Department', email: 'hr@gdmatrix.com', subject: 'April Pay Stub Available', preview: 'Your pay stub for the period Mar 16 – Mar 31 is now available in the payment portal...', date: 'Apr 12', read: true, starred: false, tag: 'Payroll', tagColor: '#16a34a' },
-  { id: 'e5', from: 'Alex Kim', email: 'alex@gdmatrix.com', subject: 'New Submission: Wipro – Full Stack Developer', preview: 'Hi Arjun, I have submitted your profile for a Full Stack Developer role at Wipro. The client...', date: 'Apr 10', read: true, starred: false, tag: 'Submission', tagColor: '#0891b2' },
-  { id: 'e6', from: 'Compliance Team', email: 'compliance@gdmatrix.com', subject: 'Visa Expiry Reminder – Action Required', preview: 'This is a reminder that your H1B visa stamp expires on Aug 15, 2026. Please contact your...', date: 'Apr 8', read: true, starred: true, tag: 'Compliance', tagColor: '#dc2626' },
-];
+const emails: any[] = [];
 
 const folders = [
   { label: 'Inbox', icon: Inbox, count: 2 },

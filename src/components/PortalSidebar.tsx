@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   LayoutDashboard, FileText, ShieldCheck, BookOpen, LogOut, ArrowLeftRight,
   MessageSquare, Mail, AlertTriangle, Lightbulb, MessageCircle
@@ -33,15 +34,38 @@ const nav = [
   },
 ];
 
+import Logo from './Logo';
+
 export default function PortalSidebar() {
   const pathname = usePathname();
+  const [user, setUser] = useState({ name: 'Arjun Sharma', title: 'Java Developer', company: 'GD Matrix' });
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        if (u.name) {
+          setUser({
+            name: u.name,
+            title: u.title || 'Consultant',
+            company: u.companyName || 'GD Matrix'
+          });
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
   return (
     <aside className="sidebar">
       <Link href="/portal/dashboard" className="sidebar-logo">
-        <div className="sidebar-logo-icon" style={{ background: 'var(--cyan)', color: 'white' }}>GD</div>
+        <div className="sidebar-logo-icon" style={{ background: 'transparent', padding: 0 }}>
+          <Logo style={{ width: 28, height: 28, color: 'var(--cyan, #0ea5e9)' }} />
+        </div>
         <div className="sidebar-logo-text">
-          <span className="sidebar-logo-name">GD Matrix</span>
+          <span className="sidebar-logo-name">{user.company}</span>
           <span className="sidebar-logo-sub">Consultant Portal</span>
         </div>
       </Link>
@@ -64,20 +88,24 @@ export default function PortalSidebar() {
         ))}
       </nav>
 
-      {/* Temp Switch to Admin */}
-      <div style={{ padding: '0 1rem', marginTop: 'auto', marginBottom: '1rem' }}>
-         <Link href="/dashboard" className="btn btn-secondary w-full" style={{ justifyContent: 'center' }}>
-            <ArrowLeftRight size={16}/> Switch to Admin
-         </Link>
-      </div>
-
       <div className="sidebar-footer">
-        <div className="avatar" style={{ background: 'var(--cyan)', color: 'white' }}>AS</div>
+        <div className="avatar" style={{ background: 'var(--cyan)', color: 'white' }}>{initials}</div>
         <div className="avatar-info">
-          <div className="avatar-name">Arjun Sharma</div>
-          <div className="avatar-role">Java Developer</div>
+          <div className="avatar-name">{user.name}</div>
+          <div className="avatar-role">{user.title}</div>
         </div>
-        <button className="btn-icon" title="Sign out" style={{ marginLeft: 'auto' }}><LogOut /></button>
+        <button 
+          className="btn-icon" 
+          title="Sign out" 
+          style={{ marginLeft: 'auto' }}
+          onClick={() => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = '/auth';
+          }}
+        >
+          <LogOut />
+        </button>
       </div>
     </aside>
   );

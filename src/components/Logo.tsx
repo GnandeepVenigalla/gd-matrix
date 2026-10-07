@@ -1,0 +1,25 @@
+import React from 'react';
+
+export default function Logo({ className = "", style = {} }: { className?: string, style?: React.CSSProperties }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 100 100" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="6" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className} 
+      style={style}
+    >
+      <polygon points="10,10 15,90 50,65 85,90 90,10 50,35" />
+      <line x1="10" y1="10" x2="50" y2="65" />
+      <line x1="15" y1="90" x2="50" y2="35" />
+      <line x1="90" y1="10" x2="50" y2="65" />
+      <line x1="85" y1="90" x2="50" y2="35" />
+      <line x1="20" y1="16.25" x2="20" y2="86.43" />
+      <line x1="80" y1="16.25" x2="80" y2="86.43" />
+    </svg>
+  );
+}

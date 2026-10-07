@@ -87,8 +87,8 @@ export default function CompliancePage() {
                         key={c.id}
                         style={{
                           cursor: 'pointer',
-                          background: selectedConsultant.id === c.id ? 'var(--bg-hover)' : undefined,
-                          borderLeft: selectedConsultant.id === c.id ? '2px solid var(--cyan)' : '2px solid transparent',
+                          background: selectedConsultant?.id === c.id ? 'var(--bg-hover)' : undefined,
+                          borderLeft: selectedConsultant?.id === c.id ? '2px solid var(--cyan)' : '2px solid transparent',
                         }}
                         onClick={() => setSelectedConsultant(c)}
                       >
@@ -136,30 +136,37 @@ export default function CompliancePage() {
             {/* Document Vault */}
             <div className="card">
               <div className="section-header">
-                <div className="section-title">📂 Document Vault — {selectedConsultant.name}</div>
+                <div className="section-title">📂 Document Vault {selectedConsultant ? `— ${selectedConsultant.name}` : ''}</div>
               </div>
-              {[
-                { key: 'passport', label: 'Passport Copy', desc: 'Government-issued travel document' },
-                { key: 'i94', label: 'I-94 Record', desc: 'Arrival/departure record' },
-                { key: 'lca', label: 'LCA / H1B Notice', desc: 'Labor Condition Application' },
-                { key: 'i797', label: 'I-797 Approval', desc: 'USCIS approval notice' },
-              ].map(doc => {
-                const uploaded = selectedConsultant.compliance[doc.key as keyof typeof selectedConsultant.compliance];
-                return (
-                  <div key={doc.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: uploaded ? 'var(--green-dim)' : 'var(--red-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {uploaded ? <CheckCircle size={16} style={{ color: 'var(--green)' }} /> : <XCircle size={16} style={{ color: 'var(--red)' }} />}
+              
+              {!selectedConsultant ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontSize: 13 }}>
+                  No consultant selected or available.
+                </div>
+              ) : (
+                [
+                  { key: 'passport', label: 'Passport Copy', desc: 'Government-issued travel document' },
+                  { key: 'i94', label: 'I-94 Record', desc: 'Arrival/departure record' },
+                  { key: 'lca', label: 'LCA / H1B Notice', desc: 'Labor Condition Application' },
+                  { key: 'i797', label: 'I-797 Approval', desc: 'USCIS approval notice' },
+                ].map(doc => {
+                  const uploaded = selectedConsultant.compliance[doc.key as keyof typeof selectedConsultant.compliance];
+                  return (
+                    <div key={doc.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: uploaded ? 'var(--green-dim)' : 'var(--red-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        {uploaded ? <CheckCircle size={16} style={{ color: 'var(--green)' }} /> : <XCircle size={16} style={{ color: 'var(--red)' }} />}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>{doc.label}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{doc.desc}</div>
+                      </div>
+                      <button className={`btn btn-sm ${uploaded ? 'btn-secondary' : 'btn-primary'}`}>
+                        {uploaded ? 'View' : 'Upload'}
+                      </button>
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{doc.label}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{doc.desc}</div>
-                    </div>
-                    <button className={`btn btn-sm ${uploaded ? 'btn-secondary' : 'btn-primary'}`}>
-                      {uploaded ? 'View' : 'Upload'}
-                    </button>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
         </div>

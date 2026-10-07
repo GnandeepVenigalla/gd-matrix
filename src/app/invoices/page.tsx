@@ -1,13 +1,31 @@
 'use client';
-import { invoices as allInvoices } from '@/lib/mockData';
+import { useState, useEffect } from 'react';
 import { FileText, Download, CheckCircle, AlertTriangle, Clock, TrendingUp } from 'lucide-react';
 
 const STATUS_MAP = { Paid: 'badge-green', Pending: 'badge-yellow', Overdue: 'badge-red' };
 
 export default function InvoicesPage() {
+  const [allInvoices, setAllInvoices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${getApiUrl()}/api/invoices`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setAllInvoices(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
   const totalPaid = allInvoices.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amount, 0);
   const totalPending = allInvoices.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
   const totalOverdue = allInvoices.filter(i => i.status === 'Overdue').reduce((s, i) => s + i.amount, 0);
+
+  if (loading) return <div style={{ padding: '2rem' }}>Loading invoices...</div>;
 
   return (
     <>
@@ -45,26 +63,27 @@ export default function InvoicesPage() {
               <tr><th>Invoice ID</th><th>Consultant</th><th>Vendor</th><th>Hours</th><th>Rate</th><th>Total</th><th>Issued</th><th>Due</th><th>Status</th><th>Actions</th></tr>
             </thead>
             <tbody>
-              {allInvoices.map(inv => (
-                <tr key={inv.id}>
-                  <td style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'var(--cyan)' }}>{inv.id}</td>
-                  <td style={{ fontWeight: 600 }}>{inv.consultantName}</td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 12 }}>{inv.vendorName}</td>
-                  <td style={{ fontFamily: 'JetBrains Mono, monospace' }}>{inv.hours}h</td>
-                  <td style={{ fontFamily: 'JetBrains Mono, monospace' }}>${inv.rate}/hr</td>
-                  <td style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: 'var(--green)', fontSize: 14 }}>${inv.amount.toLocaleString()}</td>
-                  <td style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'JetBrains Mono, monospace' }}>{inv.issuedDate}</td>
-                  <td style={{ fontSize: 12, color: inv.status === 'Overdue' ? 'var(--red)' : 'var(--text-secondary)', fontFamily: 'JetBrains Mono, monospace' }}>{inv.dueDate}</td>
-                  <td><span className={`badge ${STATUS_MAP[inv.status]}`}>{inv.status}</span></td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 4 }}>
-                      <button className="btn btn-sm btn-ghost"><Download size={12} /> PDF</button>
-                      {inv.status !== 'Paid' && <button className="btn btn-sm btn-success"><CheckCircle size={12} /> Paid</button>}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                {allInvoices.length === 0 ? (
+                  <tr><td colSpan={7} style={{textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)'}}>No invoices generated yet.</td></tr>
+                ) : allInvoices.map(inv => (
+                  <tr key={inv.id}>
+                    <td>
+                      <div style={{ fontWeight: 500 }}>{inv.consultantName || 'Unknown'}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{inv.vendorName || 'Direct Client'}</div>
+                    </td>
+                    <td>{inv.issuedDate || 'N/A'}</td>
+                    <td>{inv.dueDate || 'N/A'}</td>
+                    <td>{inv.hours}h</td>
+                    <td style={{ fontWeight: 500, color: 'var(--green)' }}>${(inv.amount || 0).toLocaleString()}</td>
+                    <td><span className={`badge ${STATUS_MAP[inv.status as keyof typeof STATUS_MAP] || 'badge-cyan'}`}>{inv.status}</span></td>
+                    <td>
+                      <div className="action-buttons">
+                        <button className="btn-icon"><Download size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
           </table>
         </div>
       </div>
